@@ -1,3 +1,15 @@
+/*! 
+        DISCLAIMER: 
+            The following code was written using examples from the first two volumes 
+            of Eric Lengyel's "Foundations of Game Engine Development", and as such 
+            all intellectual accreditation of said code is given to Dr. Lengyel alone.
+
+            The expansions and modifications I made upon his examples can be considered
+            trivial, as Dr. Lengyel himself suggests in the texts to expand upon the
+            materials presented.
+
+*/
+#pragma once
 #include <cmath>
 #include <iostream>
 #include <stdexcept>
@@ -6,17 +18,15 @@ using namespace std;
 /*
         EXCEPTIONS
 */
-class ZeroVectorE : public runtime_error
+struct ZeroVectorE : public runtime_error
 {
-public:
     ZeroVectorE() : runtime_error("Math Error: Vector being projected onto is zero vector.\n")
     {}
 };
 
-class ZeroMagnitudeE : public runtime_error
+struct ZeroMagnitudeE : public runtime_error
 {
-public:
-    ZeroMagnitudeE() : runtime_error("Math Error: The magnitude of a vector is zero.\n")
+    ZeroMagnitudeE() : runtime_error("Math Error: The magnitude of a vector in the denominator is zero.\n")
     {}
 };
 
@@ -74,6 +84,11 @@ struct Vector2
 };
 
 // Vector2 Inline functions
+inline float InnerProduct(const Vector2& v1, const Vector2& v2)
+{
+    return (v1.x * v2.x) + (v1.y + v2.y);
+}
+
 inline Vector2 operator +(const Vector2& v1, const Vector2& v2)
 {
     return (Vector2(v1.x + v2.x, v1.y + v2.y));
@@ -92,6 +107,11 @@ inline Vector2 operator *(const Vector2& vec, float scalar)
 inline Vector2 operator *(float scalar, const Vector2& vec)
 {
     return (vec * scalar);
+}
+
+inline float operator *(const Vector2& a, const Vector2& b)
+{
+    return InnerProduct(a,b);
 }
 
 inline Vector2 operator /(const Vector2& vec, float scalar)
@@ -115,19 +135,19 @@ inline Vector2 Normalize(const Vector2& vec)
     return (vec / Magnitude(vec));
 }
 
-inline float InnerProduct(const Vector2& v1, const Vector2& v2)
-{
-    return (v1.x * v2.x) + (v1.y + v2.y);
-}
-
 inline float Angle(const Vector2& v1, const Vector2& v2)
 {
-    return acos(InnerProduct(v1, v2) / (Magnitude(v1) * Magnitude(v2)));
-}
-
-void ProjectionVerify(const Vector2& vec)
-{
-    if (InnerProduct(vec, vec) == 0.0f) throw ZeroVectorE();
+    try
+    {
+        if (Magnitude(v1) == 0 || Magnitude(v2) == 0) throw ZeroMagnitudeE();
+        return acos(InnerProduct(v1, v2) / (Magnitude(v1) * Magnitude(v2)));
+    }
+    catch(ZeroMagnitudeE& e)
+    {
+        cout << "Exception occurred!\n" << e.what();
+    }
+    
+    
 }
 
 // Projects v1 onto v2
@@ -135,14 +155,19 @@ inline Vector2 Projection(const Vector2& v1, const Vector2& v2)
 {
     try 
     {
-        ProjectionVerify(v2);
-        return ((InnerProduct(v1,v2) / InnerProduct(v2, v2)) * v2);
+        if (v2*v2 == 0.0f) throw ZeroVectorE();
+        return (((v1*v2) / (v2*v2)) * v2);
     }
 
     catch (ZeroVectorE& e)
     {
-        cout << "Exception occurred\n" << e.what();
+        cout << "Exception occurred!\n" << e.what();
     }
+}
+
+inline Vector2 Rejection(const Vector2& v1, const Vector2& v2)
+{
+    return (v1 - Projection(v1, v2));
 }
 /*
         VECTOR 3D
@@ -203,6 +228,11 @@ struct Vector3
 };
 
 // Vector 3 Inline functions
+inline float InnerProduct(const Vector3& v1, const Vector3& v2)
+{
+    return ((v1.x * v2.x) + (v1.y + v2.y) + (v1.z + v2.z));
+}
+
 inline Vector3 operator +(const Vector3& v1, const Vector3& v2)
 {
     return (Vector3(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z));
@@ -221,6 +251,11 @@ inline Vector3 operator *(const Vector3& vec, float scalar)
 inline Vector3 operator *(float scalar, const Vector3& vec)
 {
     return (vec * scalar);
+}
+
+inline float operator *(const Vector3& a, const Vector3& b)
+{
+    return InnerProduct(a,b);
 }
 
 inline Vector3 operator /(const Vector3& vec, float scalar)
@@ -244,25 +279,46 @@ inline Vector3 Normalize(const Vector3& vec)
     return (vec / Magnitude(vec));
 }
 
-inline float InnerProduct(const Vector3& v1, const Vector3& v2)
-{
-    return ((v1.x * v2.x) + (v1.y + v2.y) + (v1.z + v2.z));
-}
-
 inline float Angle(const Vector3& v1, const Vector3& v2)
 {
-    return acos(InnerProduct(v1, v2) / (Magnitude(v1) * Magnitude(v2)));
+    try
+    {
+        if (Magnitude(v1)==0 || Magnitude(v2)==0) throw ZeroMagnitudeE();
+        return acos((v1 * v2) / (Magnitude(v1) * Magnitude(v2)));
+    }
+    catch(ZeroMagnitudeE& e)
+    {
+        cout << "Exception occurred!\n" << e.what();
+    }
+    
 }
-inline Vector3 CrossProduct(Vector3& v1, Vector3& v2)
+inline Vector3 Projection(const Vector3& v1, const Vector3& v2)
+{
+    try 
+    {
+        if ((v2 * v2) == 0.0f) throw ZeroVectorE();
+        return (((v1 * v2) / (v2 * v2)) * v2);
+    }
+
+    catch (ZeroVectorE& e)
+    {
+        cout << "Exception occurred!\n" << e.what();
+    }
+}
+inline Vector3 Rejection(const Vector3& v1, const Vector3& v2)
+{
+    return (v1 - Projection(v1, v2));
+}
+inline Vector3 CrossProduct(const Vector3& v1,const Vector3& v2)
 {
     return (Vector3(v1.y*v2.z - v1.z*v2.y,
                     v1.z*v2.x - v1.x*v2.z,
                     v1.x*v2.y - v1.y*v2.x));
 }
-inline float ScalarTripleProduct(Vector3& v1, Vector3& v2, Vector3 v3)
+inline float ScalarTripleProduct(const Vector3& v1,const Vector3& v2,const Vector3& v3)
 {
     // Returns (v1 x v2) * v3
-    return (InnerProduct(CrossProduct(v1, v2), v3));
+    return (CrossProduct(v1, v2) * v3);
 }
 /*
         VECTOR 4D
@@ -309,10 +365,10 @@ struct Vector4
     Vector4& operator /=(float scalar)
     {
         float sc = (1.0f/scalar);
-        w *= scalar;
-        x *= scalar;
-        y *= scalar;
-        z *= scalar;
+        w *= sc;
+        x *= sc;
+        y *= sc;
+        z *= sc;
         return (*this);
     }
     
@@ -328,6 +384,11 @@ struct Vector4
 };
 
 // Vector4 inline functions
+inline float InnerProduct(const Vector4& v1, const Vector4& v2)
+{
+    return ((v1.w*v2.w) + (v1.x*v2.x) + (v1.y*v2.y) + (v1.z*v2.z));
+}
+
 inline Vector4 operator +(const Vector4& v1, const Vector4& v2)
 {
     return (Vector4(v1.w+v2.w, v1.x+v2.x, v1.y+v2.y, v1.z+v2.z));
@@ -346,6 +407,10 @@ inline Vector4 operator *(const Vector4& vec, float scalar)
 inline Vector4 operator *(float scalar, const Vector4& vec)
 {
     return (vec * scalar);
+}
+inline float operator *(const Vector4& a, const Vector4& b)
+{
+    return InnerProduct(a,b);
 }
 
 inline Vector4 operator /(const Vector4& vec, float scalar)
@@ -369,12 +434,33 @@ inline Vector4 Normalize(const Vector4& vec)
     return (vec / Magnitude(vec));
 }
 
-inline float InnerProduct(const Vector4& v1, const Vector4& v2)
-{
-    return ((v1.w*v2.w) + (v1.x*v2.x) + (v1.y*v2.y) + (v1.z*v2.z));
-}
-
 inline float Angle(const Vector4& v1, const Vector4& v2)
 {
-    return acos(InnerProduct(v1, v2) / (Magnitude(v1) * Magnitude(v2)));
+    try
+    {
+        if (Magnitude(v1)==0 || Magnitude(v2)==0) throw ZeroMagnitudeE();
+        return acos((v1 * v2) / (Magnitude(v1) * Magnitude(v2)));
+    }
+    catch(ZeroMagnitudeE& e)
+    {
+        cout << "Exception occurred!\n" << e.what();
+    }
+    
+}
+inline Vector4 Projection(const Vector4& v1, const Vector4& v2)
+{
+    try 
+    {
+        if ((v2 * v2) == 0.0f) throw ZeroVectorE();
+        return (((v1 * v2) / (v2 * v2)) * v2);
+    }
+
+    catch (ZeroVectorE& e)
+    {
+        cout << "Exception occurred!\n" << e.what();
+    }
+}
+inline Vector4 Rejection(const Vector4& v1, const Vector4& v2)
+{
+    return (v1 - Projection(v1, v2));
 }
