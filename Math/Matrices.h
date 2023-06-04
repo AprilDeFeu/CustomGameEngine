@@ -1,12 +1,4 @@
-/*! DISCLAIMER: 
- *  The following code was written using examples from the first two volumes 
- *  of Eric Lengyel's "Foundations of Game Engine Development", and as such 
- *  all intellectual accreditation of said code is given to Dr. Lengyel alone.
- *
- *  The expansions and modifications I made upon his examples can be considered
- *  trivial, as Dr. Lengyel himself suggests in the texts to expand upon the
- *  materials presented.
- */
+
 
 //      INCLUDES
 #pragma once
@@ -925,7 +917,14 @@ inline Transform4 operator *(const Transform4& A, const Transform4& B)
         A(2,0)*B(0,3) + A(2,1)*B(1,3) + A(2,2)*B(2,3) + A(2,3)
     ));
 }
-
+inline Vector3 operator *(const Vector3& n, const Transform4& T)
+{
+    return (Vector3(
+        n.x*T(0,0) + n.y*T(1,0) + n.z*T(2,0),
+        n.x*T(0,1) + n.y*T(1,1) + n.z*T(2,1),
+        n.x*T(0,2) + n.y*T(1,2) + n.z*T(2,2)
+    ));
+}
 inline Vector3 operator *(const Transform4& T, const Vector3& v)
 {
     return (Vector3(
@@ -1015,6 +1014,45 @@ inline Matrix4 Skew(float angle, const Vector4& u1, const Vector4& u2)
                     y*u2.w, y*u2.x, y*u2.y + 1.0f, y*u2.z,
                     z*u2.w, z*u2.x, z*u2.y, z*u2.z + 1.0f));
 }
+/*!
+ * @brief Generates a transform of a reflection through a given normalized plane
+ * @param f The (presumably) normalized plane
+ * @return [Transform4] 4x4 matrix representing the reflection transform through f
+ */
+inline Transform4 Reflection(const Plane& f)
+{
+    float x = f.x*(-2.0f);
+    float y = f.y*(-2.0f);
+    float z = f.z*(-2.0f);
+    float nxy = x*f.y;
+    float nxz = x*f.z;
+    float nyz = y*f.z;
+
+    return (Transform4( x*f.x + 1.0f, nxy, nxz, x*f.w,
+                        nxy, y*f.y + 1.0f, nyz, y*f.w,
+                        nxz, nyz, z*f.z + 1.0f, z*f.w));
+}
+
+inline Plane operator*(const Plane& f, const Transform4& T)
+{
+    return (Plane(
+        f.x*T(0,0) + f.y*T(1,0) + f.z*T(2,0),
+        f.x*T(0,1) + f.y*T(1,1) + f.z*T(2,1),
+        f.x*T(0,2) + f.y*T(1,2) + f.z*T(2,2),
+        f.x*T(0,3) + f.y*T(1,3) + f.z*T(2,3) + f.w
+    ));
+}
+
+inline Line TransformLine(const Line& L, const Transform4& T)
+{
+    Matrix3 adj(CrossProduct(T[1], T[2]), CrossProduct(T[2],T[0]), CrossProduct(T[0], T[1]));
+    const Point3& p = T.GetTranslation();
+    Vector3 v = T*L.direction;
+    Vector3 m = adj*L.moment + CrossProduct(p, v);
+    return (Line(v,m));
+}
+
+//      QUATERNIONS
 
 struct Quaternion
 {
