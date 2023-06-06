@@ -2,8 +2,8 @@
 #include <stdexcept>
 #include <cmath>
 #include <iostream>
-#include "Vectors.h"
-#include "Geometry.h"
+#include "Math\Vectors.h"
+#include "Math\Geometry.h"
 
 //---------------------------------------------------------------------------------------------
 //                                        EXCEPTIONS
@@ -13,7 +13,11 @@ struct NonInvertibleE : public runtime_error
     NonInvertibleE() : runtime_error("Math error: Given matrix is non-invertible.\n") 
     {};
 };
-
+struct NonDiagonalizableE : public runtime_error
+{
+    NonDiagonalizableE() : runtime_error("Math error: Given matrix is not diagonalizable.\n")
+    {};
+};
 //---------------------------------------------------------------------------------------------
 //                                         CLASSES
 //---------------------------------------------------------------------------------------------
@@ -83,6 +87,10 @@ public:
     {
         return (*reinterpret_cast<const Vector2*>(m[0])==A[0]
         && *reinterpret_cast<const Vector2*>(m[1])==A[1]);
+    }
+    const bool operator != (const Matrix2& A) const
+    {
+        return !(*this == A);
     }
     //! @brief Returns the ith row as a Vector2 structure
     const Vector2 Row(int i) const
@@ -182,6 +190,10 @@ public:
         return (*reinterpret_cast<const Vector3*>(m[0])==A[0]
         && *reinterpret_cast<const Vector3*>(m[1])==A[1]
         && *reinterpret_cast<const Vector3*>(m[2])==A[2]);
+    }
+    const bool operator != (const Matrix3& A) const
+    {
+        return !(*this == A);
     }
     //! @brief Returns the ith row as a Vector2 structure
     const Vector3 Row(int i) const
@@ -289,12 +301,16 @@ public:
         m[3][0] *= sc; m[3][1] *= sc; m[3][2] *= sc; m[3][3] *= sc;
         return (*this);
     }
-    const bool operator ==(const Matrix3& A) const
+    const bool operator ==(const Matrix4& A) const
     {
-        return (*reinterpret_cast<const Vector3*>(m[0])==A[0]
-        && *reinterpret_cast<const Vector3*>(m[1])==A[1]
-        && *reinterpret_cast<const Vector3*>(m[2])==A[2]
-        && *reinterpret_cast<const Vector3*>(m[3])==A[3]);
+        return (*reinterpret_cast<const Vector4*>(m[0])==A[0]
+        && *reinterpret_cast<const Vector4*>(m[1])==A[1]
+        && *reinterpret_cast<const Vector4*>(m[2])==A[2]
+        && *reinterpret_cast<const Vector4*>(m[3])==A[3]);
+    }
+    const bool operator != (const Matrix4& A) const
+    {
+        return !(*this == A);
     }
     //! @brief Returns the ith row as a Vector2 structure
     const Vector4 Row(int i) const
@@ -589,6 +605,7 @@ struct Quaternion
     //! @brief Gets the components of the quaternion without the scalar component as a Vector3 structure
     const Vector3 GetVector(void) const {return (Vector3(x,y,z));}
     const bool operator ==(const Quaternion& q) const {return (x==q.x && y==q.y && z==q.z && w==q.w);}
+    const bool operator !=(const Quaternion& q) const {return !(*this == q);}
     Quaternion& operator +=(const Quaternion& q) {x += q.x; y += q.y; z += q.z; w += q.w; return (*this);}
     Quaternion& operator -=(const Quaternion& q) {x -= q.x; y -= q.y; z -= q.z; w -= q.w; return (*this);}
     Quaternion& operator *=(float sc) {x  *= sc; y *= sc; z *= sc; w *= sc; return (*this);}
@@ -612,6 +629,8 @@ struct Quaternion
      * @param M The matrix representing a rotation
      */
     void SetRotation(const Matrix3& M);
+    string ToString(void) {return "(" + to_string(x) + ", " + to_string(y) + ", " + to_string(z) + ", " + to_string(w) + ")";}
+    void Print(void) {cout << "Quaternion: " << ToString() << endl;}
 };
 //---------------------------------------------------------------------------------------------
 //                                        INLINE FUNCTIONS
@@ -787,7 +806,9 @@ inline Plane operator *(const Plane& f, const Transform4& T)
         f.x*T(0,3) + f.y*T(1,3) + f.z*T(2,3) + f.w
     ));
 }
+
 // Quaternions
+
 inline Quaternion operator +(const Quaternion& a, const Quaternion& b)
 {return (Quaternion(a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w));}
 inline Quaternion operator *(float sc, const Quaternion& q)

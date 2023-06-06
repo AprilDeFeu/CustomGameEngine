@@ -41,6 +41,7 @@ struct Vector2
     Vector2& operator *=(float scalar) {x *= scalar; y *= scalar; return (*this);}
     Vector2& operator /=(float scalar) {float sc = (1.0f/scalar); x *= sc; y *= sc; return (*this);}
     const bool operator ==(const Vector2& vec) const {return (x==vec.x && y==vec.y);}
+    const bool operator !=(const Vector2& vec) const {return (x!=vec.x || y!=vec.y);}
     float& operator [](int i) {return ((&x)[i]);}
     const float& operator [](int i) const {return ((&x)[i]);}
     //! @public @memberof Vector2
@@ -77,6 +78,7 @@ struct Vector3
     Vector3& operator /=(float scalar)
     {float sc = (1.0f/scalar); x *= sc; y *= sc; z *= sc; return (*this);}
     const bool operator ==(const Vector3& vec) const {return (x==vec.x && y==vec.y && z==vec.z);}
+    const bool operator !=(const Vector3& vec) const {return (x!=vec.x || y!=vec.y || z!=vec.z);}
     float& operator [](int i) {return ((&x)[i]);}
     const float& operator [](int i) const {return ((&x)[i]);}
     //! @public @memberof Vector3
@@ -115,6 +117,7 @@ struct Vector4
     Vector4& operator *=(float scalar) {x *= scalar; y *= scalar; z *= scalar; w *= scalar; return (*this);}
     Vector4& operator /=(float scalar) {float sc = (1.0f/scalar); x *= sc; y *= sc; z *= sc; w *= sc; return (*this);}
     const bool operator ==(const Vector4& vec) const {return (x==vec.x && y==vec.y && z==vec.z && w==vec.w);}
+    const bool operator !=(const Vector4& vec) const {return (x!=vec.x || y!=vec.y || z!=vec.z || w!=vec.w);}
     float& operator [](int i) {return ((&x)[i]);}
     const float& operator [](int i) const {return ((&x)[i]);}
     //! @public @memberof Vector4
@@ -133,6 +136,10 @@ struct Vector4
 //---------------------------------------------------------------------------------------------
 //                                      INLINE FUNCTIONS
 //---------------------------------------------------------------------------------------------
+
+// * * * * * POWER * * * * * //
+double Power(double base, int exponent, double accumulator);
+inline double Power(double base, int exponent) {return Power(base, exponent, 1.0);}
 
 // * * * * * INNER PRODUCTS * * * * * //
 

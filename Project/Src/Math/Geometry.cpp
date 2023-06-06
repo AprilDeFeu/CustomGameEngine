@@ -1,5 +1,5 @@
-#include "Vectors.h"
-#include "Geometry.h"
+#include "Math\Vectors.h"
+#include "Math\Geometry.h"
 
 //---------------------------------------------------------------------------------------------
 //                                          METHODS

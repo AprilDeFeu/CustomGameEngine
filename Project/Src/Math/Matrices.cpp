@@ -1,5 +1,4 @@
-#include "Matrices.h"
-#include <iomanip>
+#include "Math\Matrices.h"
 #include <iostream>
 #include <cfloat>
 
@@ -82,7 +81,7 @@ void Quaternion::SetRotation(const Matrix3& M)
 
 Matrix2 REF(const Matrix2& M, float *c)
 {
-    cout << setprecision(13);
+
     Matrix2 pr = M;
     Vector2 row1 = M.Row(0);
     Vector2 row2 = M.Row(1);
@@ -299,37 +298,37 @@ Matrix3 Inverse(const Matrix3& M)
 
 Matrix4 Inverse(const Matrix4& M)
 {
-    const Vector3& m0 = reinterpret_cast<const Vector3&>(M[0]);
-    const Vector3& m1 = reinterpret_cast<const Vector3&>(M[1]);
-    const Vector3& m2 = reinterpret_cast<const Vector3&>(M[2]);
-    const Vector3& m3 = reinterpret_cast<const Vector3&>(M[3]);
-    const Vector4& v = Vector4(M(3,0), M(3,1), M(3,2), M(3,3));
+    const Vector3& a = reinterpret_cast<const Vector3&>(M[0]);
+    const Vector3& b = reinterpret_cast<const Vector3&>(M[1]);
+    const Vector3& c = reinterpret_cast<const Vector3&>(M[2]);
+    const Vector3& d = reinterpret_cast<const Vector3&>(M[3]);
+    const Vector4& vec = Vector4(M(3,0), M(3,1), M(3,2), M(3,3));
 
-    Vector3 a = CrossProduct(m0, m1);
-    Vector3 b = CrossProduct(m2, m3);
-    Vector3 c = m0*v.x - m1*v.w;
-    Vector3 d = m2*v.z - m3*v.y;
+    Vector3 s = CrossProduct(a, b);
+    Vector3 t = CrossProduct(c, d);
+    Vector3 u = a*vec.y - b*vec.x;
+    Vector3 v = c*vec.w - d*vec.z;
 
-    float det = (a*d)+(b*c);
+    float det = (s*v)+(t*u);
 
     try
     {
         if (det == 0) throw NonInvertibleE();
-        float sc = (1.0f / ((a*d)+(b*c)));
-        a *= sc;
-        b *= sc;
-        c *= sc;
-        d *= sc;
+        float sc = (1.0f / det);
+        s *= sc;
+        t *= sc;
+        u *= sc;
+        v *= sc;
 
-        Vector3 r0 = CrossProduct(m1, d) + b*v.x;
-        Vector3 r1 = CrossProduct(d, m0) - b*v.w;
-        Vector3 r2 = CrossProduct(m3, c) + a*v.z;
-        Vector3 r3 = CrossProduct(c, m2) - a*v.y;
+        Vector3 r0 = CrossProduct(b, v) + t*vec.y;
+        Vector3 r1 = CrossProduct(v, a) - t*vec.x;
+        Vector3 r2 = CrossProduct(d, u) + s*vec.w;
+        Vector3 r3 = CrossProduct(u, c) - s*vec.z;
 
-        return (Matrix4(r0.x, r0.y, r0.z, -(m1*b),
-                        r1.x, r1.y, r1.z, (m0*b),
-                        r2.x, r2.y, r2.z, -(m3*a),
-                        r3.x, r3.y, r3.z, (m2*a)));
+        return (Matrix4(r0.x, r0.y, r0.z, -(b*t),
+                        r1.x, r1.y, r1.z, (a*t),
+                        r2.x, r2.y, r2.z, -(d*s),
+                        r3.x, r3.y, r3.z, (c*s)));
     }
     catch(NonInvertibleE& e)
     {
@@ -380,6 +379,8 @@ Transform4 Inverse(const Transform4& T)
     }
     return T.Zero();
 }
+
+
 
 // * * * * * ORTHOGONALITY CHECK * * * * * //
 

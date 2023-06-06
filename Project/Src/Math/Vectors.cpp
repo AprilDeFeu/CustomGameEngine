@@ -1,8 +1,14 @@
-#include "Vectors.h"
+#include "Math\Vectors.h"
 
 //---------------------------------------------------------------------------------------------
 //                                          FUNCTIONS
 //---------------------------------------------------------------------------------------------
+
+double Power(double base, int exponent, double accumulator)
+{
+    if (exponent == 1) return base*accumulator;
+    else return Power(base, exponent-1, accumulator*base);
+}
 
 // * * * * * 3D CROSS PRODUCT * * * * * //
 

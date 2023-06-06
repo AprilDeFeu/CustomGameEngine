@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <cfloat>
 #include <string>
-#include "Vectors.h"
+#include "Math\Vectors.h"
 
 //---------------------------------------------------------------------------------------------
 //                                        CLASSES
@@ -30,6 +30,7 @@ struct Point2 : Vector2
     //! @public @memberof Point2
     //! @brief Creates a zero point (0.0f, 0.0f)
     const Point2 Zero(void) const {return Point2(0.0f, 0.0f);}
+    void Print(void) {cout << "Point2: " << (*this).ToString() << "\n";}
 };
 /*! 
  * @class Point3 @extends Vector3
@@ -50,6 +51,7 @@ struct Point3 : Vector3
     //! @public @memberof Point3
     //! @brief Creates a zero point (0.0f, 0.0f, 0.0f)
     const Point3 Zero(void) const {return Point3(0.0f, 0.0f, 0.0f);}
+    void Print(void) {cout << "Point3: " << (*this).ToString() << "\n";}
 };
 /*! 
  * @class Point4 @extends Vector4
@@ -71,6 +73,7 @@ struct Point4 : Vector4
     //! @public @memberof Point4
     //! @brief Creates a zero point (0.0f, 0.0f, 0.0f, 0.0f)
     const Point4 Zero(void) const {return Point4(0.0f, 0.0f, 0.0f, 0.0f);}
+    void Print(void) {cout << "Point4: " << (*this).ToString() << "\n";}
 };
 
 // * * * * * LINES * * * * * //
@@ -107,8 +110,9 @@ struct Line
     //!        moment (origin), where (origin) = (0.0f, 0.0f, 0.0f)
     Line(const Point3& point) {direction = point; moment = direction.Zero();}
     const bool operator ==(const Line& L) const {return (direction == L.direction && moment == L.moment);}
-    string toString(void) {return "{d = "+direction.ToString()+"| m  = "+moment.ToString()+"}";}
-    void Print(void) {cout << "Line: " << (*this).toString() << endl;}
+    const bool operator !=(const Line& L) const {return (direction != L.direction || moment != L.moment);}
+    string ToString(void) {return "{d = "+direction.ToString()+"| m  = "+moment.ToString()+"}";}
+    void Print(void) {cout << "Line: " << (*this).ToString() << endl;}
 }; 
 
 // * * * * * PLANES * * * * * //
@@ -141,12 +145,13 @@ struct Plane
     //! @brief Returns all components of the plane's normal vector as a Vector3 structure (x,y,z)
     const Vector3 Normal(void) const {return Vector3(x,y,z);}
     const bool operator ==(const Plane& f) const {return (f.x == x && f.y == y && f.z == z && f.w == w);}
-    string toString(void)
+    const bool operator !=(const Plane& f) const {return !(f.x == x && f.y == y && f.z == z && f.w == w);}
+    string ToString(void)
     {
         Vector3 n(x,y,z);
         return "{n = "+ n.ToString()+"| w = "+ to_string(w)+"}";
     }
-    void Print(void) {cout << "Plane: " << (*this).toString() << endl;}
+    void Print(void) {cout << "Plane: " << (*this).ToString() << endl;}
 };
 
 // * * * * * 3D HOMOGENEOUS POINTS * * * * * //
@@ -221,14 +226,88 @@ struct HomogeneousPoint3
     //!        Point3 structure (x/w, y/w, z/w)
     const Point3 toPoint3() const {return (Point3(x/w, y/w, z/w));}
     const bool operator ==(const HomogeneousPoint3& h) const {return ((*this).toPoint3() == h.toPoint3());}
-    string toString(void)
+    const bool operator !=(const HomogeneousPoint3& h) const {return !((*this).toPoint3() == h.toPoint3());}
+    string ToString(void)
     {
         Point3 p(x,y,z);
         return "{p = "+ p.ToString()+"| w = "+ to_string(w)+"}";
     }
-    void Print(void) {cout << "HomogeneousPoint3: " << (*this).toString() << endl;}
+    void Print(void) {cout << "HomogeneousPoint3: " << (*this).ToString() << endl;}
 };
 
+struct Triangle2
+{
+protected:
+    Point2 a, b, c;
+    Vector2 ab, bc, ac;
+    float abLength, bcLength, acLength;
+public:
+    Triangle2() = default;
+    Triangle2(Point2 u, Point2 v, Point2 w)
+    {
+        a = u; b = v; c = w;
+        ab = b - a; bc = c - b; ac = c - a;
+        abLength = Magnitude(ab); bcLength = Magnitude(bc); acLength = Magnitude(ac);
+    }
+    const float Area(void) const {return 0.5f*fabs(ab.x*ac.y - ac.x*ab.y);}
+    const float Perimeter(void) const {return (abLength + bcLength + acLength);}
+    const bool operator ==(const Triangle2& t) const {return (a == t.a && b == t.b && c == t.c);}
+    const bool operator !=(const Triangle2& t) const {return !((*this) == t);}
+    string ToString(void) {return "{A: " + a.ToString() + "| B: " + b.ToString() + "| C: " + c.ToString() + "}\n";}
+    void Print(void) {cout << "Triangle2: " << (*this).ToString() << endl;}
+    void SetPoints(Point2 u, Point2 v, Point2 w)
+    {
+        a = u; b = v; c = w;
+        ab = b - a; bc = c - b; ac = c - a;
+        abLength = Magnitude(ab); bcLength = Magnitude(bc); acLength = Magnitude(ac);
+    }
+    Point2 GetVertexA(void) {return a;}
+    Point2 GetVertexB(void) {return b;}
+    Point2 GetVertexC(void) {return c;}
+    Vector2 GetEdgeAB(void) {return ab;}
+    Vector2 GetEdgeBC(void) {return bc;}
+    Vector2 GetEdgeAC(void) {return ac;}
+    float GetEdgeABLength(void) {return abLength;}
+    float GetEdgeBCLength(void) {return bcLength;}
+    float GetEdgeACLength(void) {return acLength;}
+};
+
+struct Triangle3
+{
+protected:
+    Point3 a, b, c;
+    Vector3 ab, bc, ac;
+    float abLength, bcLength, acLength;
+public:
+    Triangle3() = default;
+    Triangle3(Point3 u, Point3 v, Point3 w)
+    {
+        a = u; b = v; c = w;
+        ab = b - a; bc = c - b; ac = c - a;
+        abLength = Magnitude(ab); bcLength = Magnitude(bc); acLength = Magnitude(ac);
+    }
+    const float Area(void) const {return 0.5f*Magnitude(CrossProduct(ab, ac));}
+    const float Perimeter(void) const {return (abLength + bcLength + acLength);}
+    const bool operator ==(const Triangle3& t) const {return (a == t.a && b == t.b && c == t.c);}
+    const bool operator !=(const Triangle3& t) const {return !((*this) == t);}
+    string ToString(void) {return "{A: " + a.ToString() + "| B: " + b.ToString() + "| C: " + c.ToString() + "}\n";}
+    void Print(void) {cout << "Triangle3: " << (*this).ToString() << endl;}
+    void SetPoints(Point3 u, Point3 v, Point3 w)
+    {
+        a = u; b = v; c = w;
+        ab = b - a; bc = c - b; ac = c - a;
+        abLength = Magnitude(ab); bcLength = Magnitude(bc); acLength = Magnitude(ac);
+    }
+    Point3 GetVertexA(void) {return a;}
+    Point3 GetVertexB(void) {return b;}
+    Point3 GetVertexC(void) {return c;}
+    Vector3 GetEdgeAB(void) {return ab;}
+    Vector3 GetEdgeBC(void) {return bc;}
+    Vector3 GetEdgeAC(void) {return ac;}
+    float GetEdgeABLength(void) {return abLength;}
+    float GetEdgeBCLength(void) {return bcLength;}
+    float GetEdgeACLength(void) {return acLength;}
+};
 //---------------------------------------------------------------------------------------------
 //                                       INLINE OPERATORS
 //---------------------------------------------------------------------------------------------
