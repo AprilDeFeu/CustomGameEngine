@@ -2,6 +2,8 @@
 #include <cmath>
 #include <iostream>
 #include <stdexcept>
+#include <cfloat>
+#include <string>
 #include "Vectors.h"
 
 //---------------------------------------------------------------------------------------------
@@ -11,7 +13,7 @@
 // * * * * * POINTS * * * * * //
 
 /*! 
- * @class Point2
+ * @class Point2 @extends Vector2
  * @brief 2D Point data structure (float x, float y)
  * @param x First coordinate
  * @param y Second coordinate
@@ -27,10 +29,10 @@ struct Point2 : Vector2
     Point2(float x, float y) : Vector2(x,y) {}
     //! @public @memberof Point2
     //! @brief Creates a zero point (0.0f, 0.0f)
-    const Point2& Zero(void) const {return Point2(0.0f, 0.0f);}
+    const Point2 Zero(void) const {return Point2(0.0f, 0.0f);}
 };
 /*! 
- * @class Point3
+ * @class Point3 @extends Vector3
  * @brief 3D Point data structure (float x, float y, float z)
  * @param x First coordinate
  * @param y Second coordinate
@@ -43,20 +45,19 @@ struct Point3 : Vector3
     //! @brief Creates an empty Point3 structure
     Point3() = default;
     //! @public @memberof Point3
-    //! @brief Creates a Point3 structure (float x, float y, float z)
+    //! @brief Creates a Point3 structure 
     Point3(float x, float y, float z) : Vector3(x,y,z) {}
     //! @public @memberof Point3
     //! @brief Creates a zero point (0.0f, 0.0f, 0.0f)
-    const Point3& Zero(void) const {return Point3(0.0f, 0.0f, 0.0f);}
+    const Point3 Zero(void) const {return Point3(0.0f, 0.0f, 0.0f);}
 };
 /*! 
- * @class Point4
- * @extends Vector4
- * @brief 4D Point data structure (float w, float x, float y, float z)
- * @param w First coordinate
- * @param x Second coordinate
- * @param y Third coordinate
- * @param z fourth coordinate
+ * @class Point4 @extends Vector4
+ * @brief 4D Point data structure (float x, float y, float z, float w)
+ * @param x First coordinate
+ * @param y Second coordinate
+ * @param x Third coordinate
+ * @param w fourth coordinate
  * @param Zero() Creates a zero point (0.0f, 0.0f, 0.0f, 0.0f)
  */
 struct Point4 : Vector4
@@ -66,10 +67,10 @@ struct Point4 : Vector4
     Point4() = default;
     //! @public @memberof Point4
     //! @brief Creates a Point3 structure (float w, float x, float y, float z)
-    Point4(float w, float x, float y, float z) : Vector4(w,x,y,z) {}
+    Point4(float x, float y, float z, float w) : Vector4(x,y,z,w) {}
     //! @public @memberof Point4
     //! @brief Creates a zero point (0.0f, 0.0f, 0.0f, 0.0f)
-    const Point4& Zero(void) const {return Point4(0.0f, 0.0f, 0.0f, 0.0f);}
+    const Point4 Zero(void) const {return Point4(0.0f, 0.0f, 0.0f, 0.0f);}
 };
 
 // * * * * * LINES * * * * * //
@@ -105,6 +106,9 @@ struct Line
     //! @brief Creates a Line structure with direction (point - origin) and 
     //!        moment (origin), where (origin) = (0.0f, 0.0f, 0.0f)
     Line(const Point3& point) {direction = point; moment = direction.Zero();}
+    const bool operator ==(const Line& L) const {return (direction == L.direction && moment == L.moment);}
+    string toString(void) {return "{d = "+direction.ToString()+"| m  = "+moment.ToString()+"}";}
+    void Print(void) {cout << "Line: " << (*this).toString() << endl;}
 }; 
 
 // * * * * * PLANES * * * * * //
@@ -135,7 +139,14 @@ struct Plane
     Plane(const Vector3& n, float wk){x = n.x; y = n.y; z = n.z; w = wk;}
     //! @public @memberof Plane
     //! @brief Returns all components of the plane's normal vector as a Vector3 structure (x,y,z)
-    const Vector3& Normal(void) const {return Vector3(x,y,z);}
+    const Vector3 Normal(void) const {return Vector3(x,y,z);}
+    const bool operator ==(const Plane& f) const {return (f.x == x && f.y == y && f.z == z && f.w == w);}
+    string toString(void)
+    {
+        Vector3 n(x,y,z);
+        return "{n = "+ n.ToString()+"| w = "+ to_string(w)+"}";
+    }
+    void Print(void) {cout << "Plane: " << (*this).toString() << endl;}
 };
 
 // * * * * * 3D HOMOGENEOUS POINTS * * * * * //
@@ -204,11 +215,18 @@ struct HomogeneousPoint3
     //! @public @memberof HomogeneousPoint3
     //! @brief Returns only the point part of the HomogeneousPoint3 structure as a 
     //!        Point3 structure (x, y, z)
-    const Point3& PointPart() const {return Point3(x,y,z);}
+    const Point3 PointPart() const {return Point3(x,y,z);}
     //! @public @memberof HomogeneousPoint3
     //! @brief Returns the Cartesian version of the HomogeneousPoint3 structure as a 
     //!        Point3 structure (x/w, y/w, z/w)
-    const Point3& toPoint3() const {return (Point3(x/w, y/w, z/w));}
+    const Point3 toPoint3() const {return (Point3(x/w, y/w, z/w));}
+    const bool operator ==(const HomogeneousPoint3& h) const {return ((*this).toPoint3() == h.toPoint3());}
+    string toString(void)
+    {
+        Point3 p(x,y,z);
+        return "{p = "+ p.ToString()+"| w = "+ to_string(w)+"}";
+    }
+    void Print(void) {cout << "HomogeneousPoint3: " << (*this).toString() << endl;}
 };
 
 //---------------------------------------------------------------------------------------------
@@ -244,11 +262,11 @@ inline Point3 operator /(const Point3& p, float sc)
 // * * * * * 4D POINTS * * * * * //
 
 inline Point4 operator +(const Point4& p0, const Point4& p1) 
-    {return (Point4(p0.w + p1.w, p0.x + p1.x, p0.y + p1.y, p0.z + p1.z));}
+    {return (Point4(p0.x + p1.x, p0.y + p1.y, p0.z + p1.z, p0.w + p1.w));}
 inline Vector4 operator -(const Point4& p0, const Point4& p1) 
-    {return (Vector4(p0.w - p1.w, p0.x - p1.x, p0.y - p1.y, p0.z - p1.z));}
+    {return (Vector4(p0.x - p1.x, p0.y - p1.y, p0.z - p1.z, p0.w - p1.w));}
 inline Point4 operator *(const Point4& p, float sc) 
-    {return Point4(p.w*sc, p.x*sc, p.y*sc, p.z*sc);}
+    {return Point4(p.x*sc, p.y*sc, p.z*sc, p.w*sc);}
 inline Point4 operator *(float sc, const Point4& p) 
     {return p*sc;} 
 inline Point4 operator /(const Point4& p, float sc) 
@@ -295,7 +313,7 @@ inline Point3 toPoint(const Vector3& v) {return Point3(v.x, v.y, v.z);}
  * @param v The vector to be converted to a point
  * @return [Point3] The point
  */
-inline Point4 toPoint(const Vector4& v) {return Point4(v.w, v.x, v.y, v.z);}
+inline Point4 toPoint(const Vector4& v) {return Point4(v.x, v.y, v.z, v.w);}
 
 // * * * * * 3D NORMAL VECTOR FROM TRIANGLE VERTICES * * * * * //
 
@@ -418,7 +436,7 @@ bool Intersection(const Point3& p, const Vector3& v, const Plane& f, Point3 *q);
  * @return [bool] Yields true if the intersection line exists \n and changes the values of the 
  * pointers to define the line, false if it does not exist and leaves pointers unchanged
  */
-bool Intersection(   const Plane& f0, const Plane& f1, Point3 *p, Vector3 *v);
+bool Intersection(const Plane& f0, const Plane& f1, Point3 *p, Vector3 *v);
 /*!
  * @brief Changes the value of given point to the position at which three planes intersect, if it exists
  * @param f0 First plane

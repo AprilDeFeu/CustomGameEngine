@@ -2,6 +2,7 @@
 #include <cmath>
 #include <iostream>
 #include <stdexcept>
+#include <string>
 
 using namespace std;
 
@@ -19,8 +20,8 @@ struct ZeroMagnitudeE : public runtime_error
 //                                        CLASSES
 //---------------------------------------------------------------------------------------------
 
-/*! @class Vector2 
- *  @brief 2D Vector data structure (float x, float y)
+/*! @class Vector2
+ *  @brief 2D Vector data structure
  *  @param x First component
  *  @param y Second component
  *  @param Zero() Creates a zero vector (0.0f, 0.0f)
@@ -39,14 +40,21 @@ struct Vector2
     Vector2& operator -=(const Vector2& vec) {x -= vec.x; y -= vec.y; return (*this);}
     Vector2& operator *=(float scalar) {x *= scalar; y *= scalar; return (*this);}
     Vector2& operator /=(float scalar) {float sc = (1.0f/scalar); x *= sc; y *= sc; return (*this);}
+    const bool operator ==(const Vector2& vec) const {return (x==vec.x && y==vec.y);}
     float& operator [](int i) {return ((&x)[i]);}
     const float& operator [](int i) const {return ((&x)[i]);}
     //! @public @memberof Vector2
     //! @brief Creates a 2D vector (0.0f, 0.0f)
-    const Vector2& Zero(void) const {return Vector2(0.0f, 0.0f);}
+    const Vector2 Zero(void) const {return Vector2(0.0f, 0.0f);}
+    //! @public @memberof Vector2
+    //! @brief Yields this Vector2 as a string representation
+    string ToString(void) {return "(" + to_string(x) + ", " + to_string(y) + ")";}
+    //! @public @memberof Vector2
+    //! @brief Prints this Vector2
+    void Print(void) {cout << "Vector2: " << (*this).ToString() << "\n";}
 };
 
-/*! @class Vector3 
+/*! @class Vector3
  *  @brief 3D Vector data structure (float x, float y, float z)
  *  @param x First component
  *  @param y Second component
@@ -62,46 +70,64 @@ struct Vector3
     //! @public @memberof Vector3
     //! @brief Creates a Vector3 data structure (float x, float y, float z)
     Vector3(float a, float b, float c) {x = a;  y = b;  z = c;}
-    
+
     Vector3& operator +=(const Vector3& vec) {x += vec.x; y += vec.y; z += vec.z; return (*this);}
     Vector3& operator -=(const Vector3& vec) {x -= vec.x; y -= vec.y; z -= vec.z; return (*this);}
     Vector3& operator *=(float scalar) {x *= scalar; y *= scalar; z *= scalar; return (*this);}
     Vector3& operator /=(float scalar)
     {float sc = (1.0f/scalar); x *= sc; y *= sc; z *= sc; return (*this);}
+    const bool operator ==(const Vector3& vec) const {return (x==vec.x && y==vec.y && z==vec.z);}
     float& operator [](int i) {return ((&x)[i]);}
     const float& operator [](int i) const {return ((&x)[i]);}
     //! @public @memberof Vector3
     //! @brief Creates a 3D vector (0.0f, 0.0f, 0.0f)
-    const Vector3& Zero(void) const {return Vector3(0.0f, 0.0f, 0.0f);}
+    const Vector3 Zero(void) const {return Vector3(0.0f, 0.0f, 0.0f);}
+    //! @public @memberof Vector3
+    //! @brief Yields this Vector3 as a string representation
+    string ToString(void) {return "(" + to_string(x) + ", " + to_string(y) + ", " + to_string(z) + ")";}
+    //! @public @memberof Vector3
+    //! @brief Prints this Vector3
+    void Print(void) {cout << "Vector3: " << (*this).ToString() << "\n";}
+
 };
 
-/*! @class Vector4 
+/*! @class Vector4
  *  @brief 3D Vector data structure (float w, float x, float y, float z)
- *  @param w First component
- *  @param x Second component
- *  @param y Third component
- *  @param z Fourth component
+ *  @param x First component
+ *  @param y Second component
+ *  @param z Third component
+ *  @param w Fourth component
  *  @param Zero() Creates a zero vector (0.0f, 0.0f, 0.0f, 0.0f)
+ *
  */
 struct Vector4
 {
-    float w, x, y, z;
+    float x, y, z, w;
     //! @public @memberof Vector4
     //! @brief Creates an empty Vector4 data structure
     Vector4() = default;
     //! @public @memberof Vector4
-    //! @brief Creates a Vector4 data structure (float w, float x, float y, float z)
-    Vector4(float n, float a, float b, float c) {w = n; x = a; y = b; z = c;}
+    //! @brief Creates a Vector4 data structure (float x, float y, float z, float w)
+    Vector4(float a, float b, float c, float n) {x = a; y = b; z = c; w = n;}
 
-    Vector4& operator +=(const Vector4& vec) {w += vec.w; x += vec.x; y += vec.y; z += vec.z; return (*this);}
-    Vector4& operator -=(const Vector4& vec) {w -= vec.w; x -= vec.x; y -= vec.y; z -= vec.z; return (*this);}
-    Vector4& operator *=(float scalar) {w *= scalar; x *= scalar; y *= scalar; z *= scalar; return (*this);}
-    Vector4& operator /=(float scalar) {float sc = (1.0f/scalar); w *= sc; x *= sc; y *= sc; z *= sc; return (*this);} 
+    Vector4& operator +=(const Vector4& vec) {x += vec.x; y += vec.y; z += vec.z; w += vec.w; return (*this);}
+    Vector4& operator -=(const Vector4& vec) {x -= vec.x; y -= vec.y; z -= vec.z; w -= vec.w; return (*this);}
+    Vector4& operator *=(float scalar) {x *= scalar; y *= scalar; z *= scalar; w *= scalar; return (*this);}
+    Vector4& operator /=(float scalar) {float sc = (1.0f/scalar); x *= sc; y *= sc; z *= sc; w *= sc; return (*this);}
+    const bool operator ==(const Vector4& vec) const {return (x==vec.x && y==vec.y && z==vec.z && w==vec.w);}
     float& operator [](int i) {return ((&x)[i]);}
     const float& operator [](int i) const {return ((&x)[i]);}
     //! @public @memberof Vector4
     //! @brief Creates a 4D vector (0.0f, 0.0f, 0.0f, 0.0f)
-    const Vector4& Zero(void) const {return Vector4(0.0f, 0.0f, 0.0f, 0.0f);}
+    const Vector4 Zero(void) const {return Vector4(0.0f, 0.0f, 0.0f, 0.0f);}
+    //! @public @memberof Vector4
+    //! @brief Yields this Vector4 as a string representation
+    string ToString(void)
+    {return "(" + to_string(x) + ", " + to_string(y) +
+            ", " + to_string(z) + ", " + to_string(w) + ")";}
+    //! @public @memberof Vector4
+    //! @brief Prints this Vector4
+    void Print(void) {cout << "Vector4: " << (*this).ToString() << "\n";}
 };
 
 //---------------------------------------------------------------------------------------------
@@ -127,7 +153,7 @@ inline float InnerProduct(const Vector3& v1, const Vector3& v2) {return ((v1.x *
 //! @param v1 First vector
 //! @param v2 Second vector
 //! @return [float] Value of their innner product.
-inline float InnerProduct(const Vector4& v1, const Vector4& v2) {return ((v1.w*v2.w) + (v1.x*v2.x) + (v1.y*v2.y) + (v1.z*v2.z));}
+inline float InnerProduct(const Vector4& v1, const Vector4& v2) {return ((v1.x*v2.x) + (v1.y*v2.y) + (v1.z*v2.z) + (v1.w*v2.w));}
 
 // * * * * * OPERATORS * * * * * //
 
@@ -153,13 +179,13 @@ inline Vector3 operator -(const Vector3& vec) {return (Vector3(-vec.x, -vec.y, -
 
 //  VECTOR4
 
-inline Vector4 operator +(const Vector4& v1, const Vector4& v2) {return (Vector4(v1.w+v2.w, v1.x+v2.x, v1.y+v2.y, v1.z+v2.z));}
-inline Vector4 operator -(const Vector4& v1, const Vector4& v2) {return (Vector4(v1.w-v2.w, v1.x-v2.x, v1.y-v2.y, v1.z-v2.z));}
-inline Vector4 operator *(const Vector4& vec, float scalar) {return (Vector4(vec.w*scalar, vec.x*scalar, vec.y*scalar, vec.z*scalar));}
+inline Vector4 operator +(const Vector4& v1, const Vector4& v2) {return (Vector4(v1.x+v2.x, v1.y+v2.y, v1.z+v2.z, v1.w+v2.w));}
+inline Vector4 operator -(const Vector4& v1, const Vector4& v2) {return (Vector4(v1.x-v2.x, v1.y-v2.y, v1.z-v2.z, v1.w-v2.w));}
+inline Vector4 operator *(const Vector4& vec, float scalar) {return (Vector4(vec.x*scalar, vec.y*scalar, vec.z*scalar, vec.w*scalar));}
 inline Vector4 operator *(float scalar, const Vector4& vec) {return (vec * scalar);}
 inline float operator *(const Vector4& a, const Vector4& b) {return InnerProduct(a,b);}
 inline Vector4 operator /(const Vector4& vec, float scalar) {scalar = 1.0f/scalar; return (scalar * vec);}
-inline Vector4 operator -(const Vector4& vec) {return (Vector4(-vec.w, -vec.x, -vec.y, -vec.z));}
+inline Vector4 operator -(const Vector4& vec) {return (Vector4(-vec.x, -vec.y, -vec.z, -vec.w));}
 
 // * * * * * MAGNITUDES * * * * * //
 
@@ -174,7 +200,7 @@ inline float Magnitude(const Vector3& vec) {return sqrt((vec.x*vec.x) + (vec.y*v
 //! @brief Yields the magnitude of a Vector4 structure
 //! @param vec The vector to find the magnitude for
 //! @return [float] Value of the magnitude
-inline float Magnitude(const Vector4& vec) {return sqrt((vec.w*vec.w) + (vec.x*vec.x) + (vec.y*vec.y) + (vec.z*vec.z));}
+inline float Magnitude(const Vector4& vec) {return sqrt((vec.x*vec.x) + (vec.y*vec.y) + (vec.z*vec.z) + (vec.w*vec.w));}
 
 // * * * * * NORMALIZATION * * * * * //
 
@@ -190,6 +216,41 @@ inline Vector3 Normalize(const Vector3& vec) {return (vec / Magnitude(vec));}
 //! @param vec The vector to normalize
 //! @return [Vector4] Normalized vector
 inline Vector4 Normalize(const Vector4& vec) {return (vec / Magnitude(vec));}
+
+// * * * * * SWAP * * * * * //
+/*!
+ * @brief Swaps the values of two vectors
+ * @param v1 First vector
+ * @param v2 Second vector
+ */
+inline void Swap(Vector2 *v1, Vector2 *v2)
+{
+    Vector2 tmp = *v1;
+    *v1 = *v2;
+    *v2 = tmp;
+}
+/*!
+ * @brief Swaps the values of two vectors
+ * @param v1 First vector
+ * @param v2 Second vector
+ */
+inline void Swap(Vector3 *v1, Vector3 *v2)
+{
+    Vector3 tmp = *v1;
+    *v1 = *v2;
+    *v2 = tmp;
+}
+/*!
+ * @brief Swaps the values of two vectors
+ * @param v1 First vector
+ * @param v2 Second vector
+ */
+inline void Swap(Vector4 *v1, Vector4 *v2)
+{
+    Vector4 tmp = *v1;
+    *v1 = *v2;
+    *v2 = tmp;
+}
 
 //---------------------------------------------------------------------------------------------
 //                                          FUNCTIONS
@@ -236,7 +297,7 @@ float Angle(const Vector4& v1, const Vector4& v2);
 //! @param v1 First vector
 //! @param v2 Second vector
 //! @return [Vector2] v1 projected onto v2
-//! @warning If v2 is a zero vector, this function will return an exception 
+//! @warning If v2 is a zero vector, this function will return an exception
 Vector2 Projection(const Vector2& v1, const Vector2& v2);
 //! @brief Projects the first Vector3 structure onto the second Vector3 structure
 //! @param v1 First vector

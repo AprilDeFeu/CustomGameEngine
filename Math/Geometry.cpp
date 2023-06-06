@@ -106,9 +106,6 @@ float DistanceBetweenLines( const Point3& p0, const Vector3& v0, const Point3& p
 
         return (Magnitude(u + (v1*x1) - (v0*x0)));
     } 
-    else // If lines are nearly parallel 
-    {
-        Vector3 a = CrossProduct(u,v0);
-        return (sqrt((a*a)/v00));
-    }
+    Vector3 a = CrossProduct(u,v0);
+    return (sqrt((a*a)/v00));
 }
