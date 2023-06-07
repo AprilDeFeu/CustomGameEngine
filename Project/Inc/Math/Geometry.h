@@ -12,7 +12,7 @@
 
 // * * * * * POINTS * * * * * //
 
-/*! 
+/*!
  * @class Point2 @extends Vector2
  * @brief 2D Point data structure (float x, float y)
  * @param x First coordinate
@@ -31,8 +31,9 @@ struct Point2 : Vector2
     //! @brief Creates a zero point (0.0f, 0.0f)
     const Point2 Zero(void) const {return Point2(0.0f, 0.0f);}
     void Print(void) {cout << "Point2: " << (*this).ToString() << "\n";}
+    Vector2 operator -= (const Point2& p) {return Vector2(x-p.x, y-p.y);}
 };
-/*! 
+/*!
  * @class Point3 @extends Vector3
  * @brief 3D Point data structure (float x, float y, float z)
  * @param x First coordinate
@@ -46,14 +47,15 @@ struct Point3 : Vector3
     //! @brief Creates an empty Point3 structure
     Point3() = default;
     //! @public @memberof Point3
-    //! @brief Creates a Point3 structure 
+    //! @brief Creates a Point3 structure
     Point3(float x, float y, float z) : Vector3(x,y,z) {}
     //! @public @memberof Point3
     //! @brief Creates a zero point (0.0f, 0.0f, 0.0f)
     const Point3 Zero(void) const {return Point3(0.0f, 0.0f, 0.0f);}
     void Print(void) {cout << "Point3: " << (*this).ToString() << "\n";}
+    Vector3 operator -= (const Point3& p) {return Vector3(x-p.x, y-p.y, z-p.z);}
 };
-/*! 
+/*!
  * @class Point4 @extends Vector4
  * @brief 4D Point data structure (float x, float y, float z, float w)
  * @param x First coordinate
@@ -74,18 +76,19 @@ struct Point4 : Vector4
     //! @brief Creates a zero point (0.0f, 0.0f, 0.0f, 0.0f)
     const Point4 Zero(void) const {return Point4(0.0f, 0.0f, 0.0f, 0.0f);}
     void Print(void) {cout << "Point4: " << (*this).ToString() << "\n";}
+    Vector4 operator -= (const Point4& p) {return Vector4(x-p.x, y-p.y, z-p.z, w-p.w);}
 };
 
 // * * * * * LINES * * * * * //
 
-/*! 
+/*!
  * @class Line
- * @brief 3D Line data structure using plucker coordinates. 
- * @param direction Vector denoting the direction of the line 
+ * @brief 3D Line data structure using plucker coordinates.
+ * @param direction Vector denoting the direction of the line
  * @param moment Vector denoting the moment of the line
  */
 struct Line
-{ 
+{
     Vector3 direction;
     Vector3 moment;
 
@@ -94,7 +97,7 @@ struct Line
     Line() = default;
     //! @public @memberof Line
     //! @brief Creates a Line structure with direction (dx, dy, dz) and moment (mx, my, mz)
-    Line(float dx, float dy, float dz, float mx, float my, float mz) : 
+    Line(float dx, float dy, float dz, float mx, float my, float mz) :
         direction (dx, dy, dz), moment (mx, my, mz) {}
     //! @public @memberof Line
     //! @brief Creates a Line structure with direction (d) and moment (m)
@@ -106,27 +109,27 @@ struct Line
     //! @brief Creates a Line structure with direction (p1-p0) and moment (CrossProduct(p0, p1))
     Line(const Point3& p0, const Point3& p1) {direction = (p1-p0);moment = CrossProduct(p0, p1);}
     //! @public @memberof Line
-    //! @brief Creates a Line structure with direction (point - origin) and 
+    //! @brief Creates a Line structure with direction (point - origin) and
     //!        moment (origin), where (origin) = (0.0f, 0.0f, 0.0f)
     Line(const Point3& point) {direction = point; moment = direction.Zero();}
     const bool operator ==(const Line& L) const {return (direction == L.direction && moment == L.moment);}
     const bool operator !=(const Line& L) const {return (direction != L.direction || moment != L.moment);}
     string ToString(void) {return "{d = "+direction.ToString()+"| m  = "+moment.ToString()+"}";}
     void Print(void) {cout << "Line: " << (*this).ToString() << endl;}
-}; 
+};
 
 // * * * * * PLANES * * * * * //
 
-/*! 
+/*!
  * @class Plane
  * @brief Plane data structure in 3D space, defined with a normal vector (x,y,z) and a constant (w)
  * @param x X-axis component of normal vector
  * @param y Y-axis component of normal vector
  * @param z Z-axis component of normal vector
- * @param w constant value, defined as the negative inner product of the normal vector and a 
- *          point on the plane: -(n*p) = w 
+ * @param w constant value, defined as the negative inner product of the normal vector and a
+ *          point on the plane: -(n*p) = w
  * @param Normal() Yields all three components of the normal vector as a Vector3 structure (x,y,z)
- */  
+ */
 struct Plane
 {
     float   x,y,z,w;
@@ -134,11 +137,11 @@ struct Plane
     //! @brief Creates a Plane structure with no defined normal vector or constant
     Plane() = default;
     //! @public @memberof Plane
-    //! @brief Creates a Plane structure with normal components (x)=(nx), (y)=(ny), (z)=(nz), 
+    //! @brief Creates a Plane structure with normal components (x)=(nx), (y)=(ny), (z)=(nz),
     //!        and constant (w)=(wk)
     Plane(float nx, float ny, float nz, float wk) {x = nx; y = ny; z = nz; w = wk;}
     //! @public @memberof Plane
-    //! @brief Creates a Plane structure with normal components (x)=(n.x), (y)=(n.y), (z)=(n.z), 
+    //! @brief Creates a Plane structure with normal components (x)=(n.x), (y)=(n.y), (z)=(n.z),
     //!        and constant (w)=(wk)
     Plane(const Vector3& n, float wk){x = n.x; y = n.y; z = n.z; w = wk;}
     //! @public @memberof Plane
@@ -156,34 +159,34 @@ struct Plane
 
 // * * * * * 3D HOMOGENEOUS POINTS * * * * * //
 
-/*! 
+/*!
  * @class HomogeneousPoint3
  * @brief Homogeneous coordinates structure (x, y, z, w).
  *        This structure is useful for Line structures, which we defined in Plucker coordinates,
- *        instead of Cartesian. The conversion between homogeneous coordinates and Cartesian 
+ *        instead of Cartesian. The conversion between homogeneous coordinates and Cartesian
  *        coordinates is given by:
  *                                         (x, y, z, w) <=> (x/w, y/w, z/w)
  * @param x X-axis homogeneous coordinate
  * @param y Y-axis homogeneous coordinate
  * @param z Z-axis homogeneous coordinate
  * @param w Homogeneous coordinate factor for changing coordinates into Cartesian, and viceversa
- * @param PointPart() Returns only the point part of the HomogeneousPoint3 structure as a 
+ * @param PointPart() Returns only the point part of the HomogeneousPoint3 structure as a
  *                    Point3 structure (x, y, z)
- * @param toPoint3() Returns the Cartesian version of the HomogeneousPoint3 structure as a 
+ * @param toPoint3() Returns the Cartesian version of the HomogeneousPoint3 structure as a
  *                    Point3 structure (x/w, y/w, z/w)
- */  
-struct HomogeneousPoint3 
+ */
+struct HomogeneousPoint3
 {
     float x, y, z, w;
     //! @public @memberof HomogeneousPoint3
     //! @brief Creates an empty HomogeneousPoint3 structure
     HomogeneousPoint3() = default;
     //! @public @memberof HomogeneousPoint3
-    //! @brief Creates a HomogeneousPoint3 structure with coordinates 
+    //! @brief Creates a HomogeneousPoint3 structure with coordinates
     //!        (x)=(a), (y)=(b), (z)=(c), (w)=(k)
     HomogeneousPoint3(float a, float b, float c, float k) {x = a; y = b; z = c; w = k;}
     //! @public @memberof HomogeneousPoint3
-    //! @brief Creates a HomogeneousPoint3 structure with coordinates 
+    //! @brief Creates a HomogeneousPoint3 structure with coordinates
     //!        (x)=(p.x), (y)=(p.y), (z)=(p.z), (w)=(k)
     HomogeneousPoint3(const Point3& p, float k) {x = p.x*k, y = p.y*k, z = p.z*k, w = k;}
     HomogeneousPoint3 operator +=(const HomogeneousPoint3& h)
@@ -218,11 +221,11 @@ struct HomogeneousPoint3
         return (*this);
     }
     //! @public @memberof HomogeneousPoint3
-    //! @brief Returns only the point part of the HomogeneousPoint3 structure as a 
+    //! @brief Returns only the point part of the HomogeneousPoint3 structure as a
     //!        Point3 structure (x, y, z)
     const Point3 PointPart() const {return Point3(x,y,z);}
     //! @public @memberof HomogeneousPoint3
-    //! @brief Returns the Cartesian version of the HomogeneousPoint3 structure as a 
+    //! @brief Returns the Cartesian version of the HomogeneousPoint3 structure as a
     //!        Point3 structure (x/w, y/w, z/w)
     const Point3 toPoint3() const {return (Point3(x/w, y/w, z/w));}
     const bool operator ==(const HomogeneousPoint3& h) const {return ((*this).toPoint3() == h.toPoint3());}
@@ -314,41 +317,41 @@ public:
 
 // * * * * * 2D POINTS * * * * * //
 
-inline Point2 operator +(const Point2& p0, const Point2& p1) 
+inline Point2 operator +(const Point2& p0, const Point2& p1)
     {return (Point2(p0.x + p1.x, p0.y + p1.y));}
-inline Vector2 operator -(const Point2& p0, const Point2& p1) 
+inline Vector2 operator -(const Point2& p0, const Point2& p1)
     {return (Vector2(p0.x - p1.x, p0.y - p1.y));}
-inline Point2 operator *(const Point2& p, float sc) 
+inline Point2 operator *(const Point2& p, float sc)
     {return Point2(p.x*sc, p.y*sc);}
-inline Point2 operator *(float sc, const Point2& p) 
-    {return p*sc;} 
-inline Point2 operator /(const Point2& p, float sc) 
+inline Point2 operator *(float sc, const Point2& p)
+    {return p*sc;}
+inline Point2 operator /(const Point2& p, float sc)
     {return (1.0f/sc)*p;}
 
 // * * * * * 3D POINTS * * * * * //
 
-inline Point3 operator +(const Point3& p0, const Point3& p1) 
+inline Point3 operator +(const Point3& p0, const Point3& p1)
     {return (Point3(p0.x + p1.x, p0.y + p1.y, p0.z + p1.z));}
-inline Vector3 operator -(const Point3& p0, const Point3& p1) 
+inline Vector3 operator -(const Point3& p0, const Point3& p1)
     {return (Vector3(p0.x - p1.x, p0.y - p1.y, p0.z - p1.z));}
-inline Point3 operator *(const Point3& p, float sc) 
+inline Point3 operator *(const Point3& p, float sc)
     {return Point3(p.x*sc, p.y*sc, p.z*sc);}
-inline Point3 operator *(float sc, const Point3& p) 
-    {return p*sc;} 
-inline Point3 operator /(const Point3& p, float sc) 
+inline Point3 operator *(float sc, const Point3& p)
+    {return p*sc;}
+inline Point3 operator /(const Point3& p, float sc)
     {return (1.0f/sc)*p;}
 
 // * * * * * 4D POINTS * * * * * //
 
-inline Point4 operator +(const Point4& p0, const Point4& p1) 
+inline Point4 operator +(const Point4& p0, const Point4& p1)
     {return (Point4(p0.x + p1.x, p0.y + p1.y, p0.z + p1.z, p0.w + p1.w));}
-inline Vector4 operator -(const Point4& p0, const Point4& p1) 
+inline Vector4 operator -(const Point4& p0, const Point4& p1)
     {return (Vector4(p0.x - p1.x, p0.y - p1.y, p0.z - p1.z, p0.w - p1.w));}
-inline Point4 operator *(const Point4& p, float sc) 
+inline Point4 operator *(const Point4& p, float sc)
     {return Point4(p.x*sc, p.y*sc, p.z*sc, p.w*sc);}
-inline Point4 operator *(float sc, const Point4& p) 
-    {return p*sc;} 
-inline Point4 operator /(const Point4& p, float sc) 
+inline Point4 operator *(float sc, const Point4& p)
+    {return p*sc;}
+inline Point4 operator /(const Point4& p, float sc)
     {return (1.0f/sc)*p;}
 
 // * * * * * PLANES * * * * * //
@@ -364,7 +367,7 @@ inline HomogeneousPoint3 operator +(const HomogeneousPoint3& p, const Homogeneou
     {return (HomogeneousPoint3(p.x*q.w + q.x*p.w, p.y*q.w + q.y*p.w, p.z*q.w + q.z*p.w, p.w*q.w));}
 inline HomogeneousPoint3 operator -(const HomogeneousPoint3& p, const HomogeneousPoint3& q)
     {return (HomogeneousPoint3(p.x*q.w - q.x*p.w, p.y*q.w - q.y*p.w, p.z*q.w - q.z*p.w, p.w*q.w));}
-inline HomogeneousPoint3 operator *(const HomogeneousPoint3& p, float sc) 
+inline HomogeneousPoint3 operator *(const HomogeneousPoint3& p, float sc)
     {return (HomogeneousPoint3(p.x*sc, p.y*sc, p.z*sc, p.w));}
 inline HomogeneousPoint3 operator *(float sc, const HomogeneousPoint3& p) {return p*sc;}
 inline HomogeneousPoint3 operator /(const HomogeneousPoint3& p, float sc) {return (1.0f/sc)*p;}
@@ -375,19 +378,19 @@ inline HomogeneousPoint3 operator /(const HomogeneousPoint3& p, float sc) {retur
 
 // * * * * * VECTOR-TO-POINT * * * * * //
 
-/*! 
+/*!
  * @brief Converts a Vector2 structure to a Point2 structure
  * @param v The vector to be converted to a point
  * @return [Point2] The point
  */
 inline Point2 toPoint(const Vector2& v) {return Point2(v.x, v.y);}
-/*! 
+/*!
  * @brief Converts a Vector3 structure to a Point3 structure
  * @param v The vector to be converted to a point
  * @return [Point3] The point
  */
 inline Point3 toPoint(const Vector3& v) {return Point3(v.x, v.y, v.z);}
-/*! 
+/*!
  * @brief Converts a Vector3 structure to a Point3 structure
  * @param v The vector to be converted to a point
  * @return [Point3] The point
@@ -403,7 +406,7 @@ inline Point4 toPoint(const Vector4& v) {return Point4(v.x, v.y, v.z, v.w);}
  * @param p2 Third vertex (x, y, z)
  * @return [Vector3] Normal vector CrossProduct(p1 - p0, p2 - p0)
  */
-inline Vector3 Normal(const Point3& p0, const Point3& p1, const Point3& p2) 
+inline Vector3 Normal(const Point3& p0, const Point3& p1, const Point3& p2)
     {return (CrossProduct(p1-p0, p2-p0));}
 
 // * * * * * INLINE DISTANCES * * * * * //
@@ -414,15 +417,15 @@ inline Vector3 Normal(const Point3& p0, const Point3& p1, const Point3& p2)
  *  @param v Directional vector of the line
  *  @return [float] Distance from q to (vt + p)
  */
-inline float DistanceToLine(const Point3& q, const Point3& p, const Vector3 v) 
+inline float DistanceToLine(const Point3& q, const Point3& p, const Vector3 v)
     {Vector3 a = CrossProduct(q-p, v); return (sqrt((a*a)/(v*v)));}
 /*!
- * @brief Calculates the distance between two Line structures 
+ * @brief Calculates the distance between two Line structures
  * @param A First line (Plucker coordinates)
  * @param B Second line (Plucker coordinates)
  * @return [float] Distance between A and B
  */
-inline float DistanceTwoLines(const Line& A, const Line& B) 
+inline float DistanceTwoLines(const Line& A, const Line& B)
     {return ((fabs(A.direction*B.moment + B.direction*A.moment))/(Magnitude(CrossProduct(A.direction, B.direction))));}
 /*!
  * @brief Calculates the distance from a given Point3 structure to a given Line structure (in Plucker coordinates)
@@ -430,14 +433,14 @@ inline float DistanceTwoLines(const Line& A, const Line& B)
  * @param p Given point
  * @return [float] Distance between p and L
  */
-inline float DistanceLinePoint(const Line& L, const Point3& p) 
+inline float DistanceLinePoint(const Line& L, const Point3& p)
     {return (Magnitude(CrossProduct(L.direction, p) + L.moment)/Magnitude(L.direction));}
 /*!
  * @brief Calculates the distance from a given Line structure (in Plucker coordinates) to the origin
  * @param L Line (in Plucker coordinates)
  * @return [float] Distance between origin and L
  */
-inline float DistanceLineOrigin(const Line& L) 
+inline float DistanceLineOrigin(const Line& L)
     {return (Magnitude(L.moment)/Magnitude(L.direction));}
 /*!
  * @brief Calculates the distance between a given point and a given plane
@@ -445,12 +448,12 @@ inline float DistanceLineOrigin(const Line& L)
  * @param p Given point
  * @return [float] Distance between f and p
  */
-inline float DistancePlanePoint(const Plane& f, const Point3& p) 
+inline float DistancePlanePoint(const Plane& f, const Point3& p)
     {return (fabs(f.Normal()*p + f.w)/Magnitude(f.Normal()));}
 /*!
  * @brief Calculates distance from given plane to origin
  * @param f Given plane
- * @return [float] Distance between origin and f 
+ * @return [float] Distance between origin and f
  */
 inline float DistancePlaneOrigin(const Plane& f)
     {return (fabs(f.w)/Magnitude(f.Normal()));}
@@ -496,13 +499,13 @@ inline Line MakeLine(const HomogeneousPoint3& p0, const HomogeneousPoint3& p1)
 // * * * * * INTERSECTIONS * * * * * //
 
 /*!
- * @brief Changes the value of given point to the position at which a given line 
+ * @brief Changes the value of given point to the position at which a given line
  and a given plane intersect, if the intersection exists
  * @param p Point on the line
  * @param v Direction of the line
  * @param f Plane
  * @param q Pointer to point of intersection
- * @return [bool] Yields true if the intersection exists \n and changes the value of the 
+ * @return [bool] Yields true if the intersection exists \n and changes the value of the
  * pointer to its location, false if it does not exist and leaves pointer unchanged
  */
 bool Intersection(const Point3& p, const Vector3& v, const Plane& f, Point3 *q);
@@ -512,7 +515,7 @@ bool Intersection(const Point3& p, const Vector3& v, const Plane& f, Point3 *q);
  * @param f1 Second plane
  * @param p Pointer to point on line of intersection
  * @param v Pointer to direction vector of line of intersection
- * @return [bool] Yields true if the intersection line exists \n and changes the values of the 
+ * @return [bool] Yields true if the intersection line exists \n and changes the values of the
  * pointers to define the line, false if it does not exist and leaves pointers unchanged
  */
 bool Intersection(const Plane& f0, const Plane& f1, Point3 *p, Vector3 *v);
@@ -522,17 +525,17 @@ bool Intersection(const Plane& f0, const Plane& f1, Point3 *p, Vector3 *v);
  * @param f1 Second plane
  * @param f2 Third plane
  * @param p Pointer to point of intersection
- * @return [bool] Yields true if the intersection exists and changes the value of the 
+ * @return [bool] Yields true if the intersection exists and changes the value of the
  * pointer to its location, false if it does not exist and leaves pointer unchanged
  */
 bool Intersection(const Plane& f0, const Plane& f1, const Plane&f2, Point3 *p);
 /*!
- * @brief Changes the value of given homogeneous point to the position at which a plane 
+ * @brief Changes the value of given homogeneous point to the position at which a plane
  * and line intersect, if it exists
  * @param L The line
  * @param p the plane
  * @param h Pointer to homogeneous point of intersection
- * @return [bool] Yields true if the intersection exists and changes the value of the 
+ * @return [bool] Yields true if the intersection exists and changes the value of the
  * pointer to its location, false if it does not exist and leaves pointer unchanged
  */
 bool Intersection(const Line& L, const Plane& p, HomogeneousPoint3 *h);

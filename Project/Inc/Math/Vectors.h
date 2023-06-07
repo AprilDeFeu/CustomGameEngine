@@ -38,6 +38,7 @@ struct Vector2
 
     Vector2& operator +=(const Vector2& vec) {x += vec.x; y += vec.y; return (*this);}
     Vector2& operator -=(const Vector2& vec) {x -= vec.x; y -= vec.y; return (*this);}
+    float operator *=(const Vector2& vec) {return x * vec.x + y * vec.y;}
     Vector2& operator *=(float scalar) {x *= scalar; y *= scalar; return (*this);}
     Vector2& operator /=(float scalar) {float sc = (1.0f/scalar); x *= sc; y *= sc; return (*this);}
     const bool operator ==(const Vector2& vec) const {return (x==vec.x && y==vec.y);}
@@ -74,6 +75,7 @@ struct Vector3
 
     Vector3& operator +=(const Vector3& vec) {x += vec.x; y += vec.y; z += vec.z; return (*this);}
     Vector3& operator -=(const Vector3& vec) {x -= vec.x; y -= vec.y; z -= vec.z; return (*this);}
+    float operator *=(const Vector3& vec) {return x * vec.x + y * vec.y + z * vec.z;}
     Vector3& operator *=(float scalar) {x *= scalar; y *= scalar; z *= scalar; return (*this);}
     Vector3& operator /=(float scalar)
     {float sc = (1.0f/scalar); x *= sc; y *= sc; z *= sc; return (*this);}
@@ -115,6 +117,7 @@ struct Vector4
     Vector4& operator +=(const Vector4& vec) {x += vec.x; y += vec.y; z += vec.z; w += vec.w; return (*this);}
     Vector4& operator -=(const Vector4& vec) {x -= vec.x; y -= vec.y; z -= vec.z; w -= vec.w; return (*this);}
     Vector4& operator *=(float scalar) {x *= scalar; y *= scalar; z *= scalar; w *= scalar; return (*this);}
+    float operator *=(const Vector4& vec) {return x * vec.x + y * vec.y + z * vec.z + w * vec.w;}
     Vector4& operator /=(float scalar) {float sc = (1.0f/scalar); x *= sc; y *= sc; z *= sc; w *= sc; return (*this);}
     const bool operator ==(const Vector4& vec) const {return (x==vec.x && y==vec.y && z==vec.z && w==vec.w);}
     const bool operator !=(const Vector4& vec) const {return (x!=vec.x || y!=vec.y || z!=vec.z || w!=vec.w);}

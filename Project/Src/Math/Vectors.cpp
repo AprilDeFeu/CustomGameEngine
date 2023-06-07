@@ -31,68 +31,44 @@ float ScalarTripleProduct(const Vector3& v1,const Vector3& v2,const Vector3& v3)
 
 float Angle(const Vector2& v1, const Vector2& v2)
 {
-    try
-    {
-        if (Magnitude(v1) == 0 || Magnitude(v2) == 0) throw ZeroMagnitudeE();
-        return acos(InnerProduct(v1, v2) / (Magnitude(v1) * Magnitude(v2)));
-    }
+    try {if (Magnitude(v1)==0 || Magnitude(v2)==0) throw ZeroMagnitudeE();}
     catch(ZeroMagnitudeE& e) {cout << "Exception occurred!\n" << e.what();}
-    return 0.0f;
+    return acos(InnerProduct(v1, v2) / (Magnitude(v1) * Magnitude(v2)));
 }
 
 float Angle(const Vector3& v1, const Vector3& v2)
 {
-    try
-    {
-        if (Magnitude(v1)==0 || Magnitude(v2)==0) throw ZeroMagnitudeE();
-        return acos((v1 * v2) / (Magnitude(v1) * Magnitude(v2)));
-    }
+    try {if (Magnitude(v1)==0 || Magnitude(v2)==0) throw ZeroMagnitudeE();}
     catch(ZeroMagnitudeE& e) {cout << "Exception occurred!\n" << e.what();}
-    return 0.0f;
+    return acos((v1 * v2) / (Magnitude(v1) * Magnitude(v2)));
 }
 
 float Angle(const Vector4& v1, const Vector4& v2)
 {
-    try
-    {
-        if (Magnitude(v1)==0 || Magnitude(v2)==0) throw ZeroMagnitudeE();
-        return acos((v1 * v2) / (Magnitude(v1) * Magnitude(v2)));
-    }
+    try {if (Magnitude(v1)==0 || Magnitude(v2)==0) throw ZeroMagnitudeE();}
     catch(ZeroMagnitudeE& e) {cout << "Exception occurred!\n" << e.what();}
-    return 0.0f;
+    return acos((v1 * v2) / (Magnitude(v1) * Magnitude(v2)));
 }
 
 // * * * * * PROJECTIONS * * * * * //
 
 Vector2 Projection(const Vector2& v1, const Vector2& v2)
 {
-    try 
-    {
-        if (v2*v2 == 0.0f) throw ZeroVectorE();
-        return (((v1*v2) / (v2*v2)) * v2);
-    }
+    try {if (v2 * v2 == 0.0f) throw ZeroVectorE();}
     catch (ZeroVectorE& e) {cout << "Exception occurred!\n" << e.what();}
-    return v1.Zero();
+    return (((v1*v2) / (v2*v2)) * v2);
 }
 
 Vector3 Projection(const Vector3& v1, const Vector3& v2)
 {
-    try 
-    {
-        if ((v2 * v2) == 0.0f) throw ZeroVectorE();
-        return (((v1 * v2) / (v2 * v2)) * v2);
-    }
+    try {if ((v2 * v2) == 0.0f) throw ZeroVectorE();}
     catch (ZeroVectorE& e) {cout << "Exception occurred!\n" << e.what();}
-    return v1.Zero();
+    return (((v1 * v2) / (v2 * v2)) * v2);
 }
 
 Vector4 Projection(const Vector4& v1, const Vector4& v2)
 {
-    try 
-    {
-        if ((v2 * v2) == 0.0f) throw ZeroVectorE();
-        return (((v1 * v2) / (v2 * v2)) * v2);
-    }
+    try {if ((v2 * v2) == 0.0f) throw ZeroVectorE();}
     catch (ZeroVectorE& e) {cout << "Exception occurred!\n" << e.what();}
-    return v1.Zero();
+    return (((v1 * v2) / (v2 * v2)) * v2);
 }
