@@ -7,13 +7,14 @@
 
 // * * * * * INTERSECTIONS * * * * * //
 
-bool Intersection(   const Point3& p, const Vector3& v, 
+bool Intersection(   const Point3& p, const Vector3& v,
                             const Plane& f, Point3 *q)
 {
     float fv = (f*v);
+    float fp = (f*p);
     if (fabs(fv) > FLT_MIN)
     {
-        *q = toPoint(p - (v*((f*p)/fv)));
+        *q = toPoint(p - v*(fp/fv));
         return (true);
     }
     return (false);
@@ -25,7 +26,7 @@ bool Intersection(   const Plane& f0, const Plane& f1, Point3 *p, Vector3 *v)
     const Vector3& n1 = f1.Normal();
 
     *v = CrossProduct(n0,n1);
-    float det = (*v * *v);
+    float det = ((*v)*(*v));
     if (fabs(det) > FLT_MIN)
     {
         *p = toPoint((CrossProduct(*v, n1)*f0.w + CrossProduct(n0,*v)*f1.w)/det);
@@ -65,21 +66,11 @@ bool Intersection(const Line& L, const Plane& p, HomogeneousPoint3 *h)
 
 // * * * * * EXTRAS * * * * * //
 
-Point3 ClosestDistanceToPoint(const Vector3& v, const Point3& p)
+float ClosestDistanceToPoint(const Vector3& v, const Point3& p, const Point3& q)
 {
-    Point3 *q = new Point3(0.0f, 0.0f, 0.0f);
-    Plane f(v, (-1.0f*v*p));
-    if (Intersection(p, v, f, q)) 
-    {
-        Point3 res = *q;
-        delete q;
-        
-        return res;
-    }
-    delete q;
-    // This should only be reached if, for some reason, there is no orthogonal
-    // plane to the given line, which I think should be impossible.
-    return Point3(-FLT_MIN, -FLT_MIN, -FLT_MIN);
+    Vector3 u = (p-q);
+    Vector3 s = CrossProduct(u, v);
+    return Magnitude(s)/Magnitude(v);
 }
 
 Plane TranslatePlane(const Plane& f, const Vector3& t)
@@ -105,7 +96,7 @@ float DistanceBetweenLines( const Point3& p0, const Vector3& v0, const Point3& p
         float x1 = ((v00*uv1) - (v01*uv0))*det;
 
         return (Magnitude(u + (v1*x1) - (v0*x0)));
-    } 
+    }
     Vector3 a = CrossProduct(u,v0);
     return (sqrt((a*a)/v00));
 }

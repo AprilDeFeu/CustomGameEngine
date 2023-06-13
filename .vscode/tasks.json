@@ -1,0 +1,30 @@
+{
+	"version": "2.0.0",
+
+	"tasks": [
+		{
+			"type": "cppbuild",
+			"label": "C/C++: g++.exe Build MathUnitTest.exe",
+			"command": "C:/msys64/mingw64/bin/g++.exe",
+			"args": [
+				"-fdiagnostics-color=always",
+				"-I${workspaceFolder}\\Project\\Inc",
+				"-g",
+				"${workspaceFolder}\\Project\\Src\\Math\\Helpers.cpp",
+				"${workspaceFolder}\\Project\\Src\\Math\\Vectors.cpp",
+				"${workspaceFolder}\\Project\\Src\\Math\\Geometry.cpp",
+				"${workspaceFolder}\\Project\\Src\\Math\\Matrices.cpp",
+				"${workspaceFolder}\\Project\\Src\\UnitTest\\MathUnitClasses.cpp",
+				"${workspaceFolder}\\Project\\Src\\UnitTest\\MathUnitTests.cpp",
+				"${workspaceFolder}\\Project\\Src\\Main\\Main.cpp",
+				"-o",
+				"${workspaceFolder}\\Project\\Test\\MathUnitTest.exe"
+			],
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"detail": "compiler: C:/msys64/mingw64/bin/g++.exe"
+		}
+	]
+}

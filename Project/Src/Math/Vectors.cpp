@@ -4,12 +4,6 @@
 //                                          FUNCTIONS
 //---------------------------------------------------------------------------------------------
 
-double Power(double base, int exponent, double accumulator)
-{
-    if (exponent == 1) return base*accumulator;
-    else return Power(base, exponent-1, accumulator*base);
-}
-
 // * * * * * 3D CROSS PRODUCT * * * * * //
 
 Vector3 CrossProduct(const Vector3& v1,const Vector3& v2)

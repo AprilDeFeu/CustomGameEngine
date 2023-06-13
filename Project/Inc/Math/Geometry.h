@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <cfloat>
 #include <string>
+#include "Math\Helpers.h"
 #include "Math\Vectors.h"
 
 //---------------------------------------------------------------------------------------------
@@ -30,6 +31,7 @@ struct Point2 : Vector2
     //! @public @memberof Point2
     //! @brief Creates a zero point (0.0f, 0.0f)
     const Point2 Zero(void) const {return Point2(0.0f, 0.0f);}
+    string ToString() const {return "("+to_string(x)+", "+to_string(y)+")";}
     void Print(void) {cout << "Point2: " << (*this).ToString() << "\n";}
     Vector2 operator -= (const Point2& p) {return Vector2(x-p.x, y-p.y);}
 };
@@ -52,6 +54,7 @@ struct Point3 : Vector3
     //! @public @memberof Point3
     //! @brief Creates a zero point (0.0f, 0.0f, 0.0f)
     const Point3 Zero(void) const {return Point3(0.0f, 0.0f, 0.0f);}
+    const string ToString() const {return "("+to_string(x)+", "+to_string(y)+", "+to_string(z)+")";}
     void Print(void) {cout << "Point3: " << (*this).ToString() << "\n";}
     Vector3 operator -= (const Point3& p) {return Vector3(x-p.x, y-p.y, z-p.z);}
 };
@@ -75,6 +78,7 @@ struct Point4 : Vector4
     //! @public @memberof Point4
     //! @brief Creates a zero point (0.0f, 0.0f, 0.0f, 0.0f)
     const Point4 Zero(void) const {return Point4(0.0f, 0.0f, 0.0f, 0.0f);}
+    const string ToString() const {return "("+to_string(x)+", "+to_string(y)+", "+to_string(z)+", "+to_string(w)+")";}
     void Print(void) {cout << "Point4: " << (*this).ToString() << "\n";}
     Vector4 operator -= (const Point4& p) {return Vector4(x-p.x, y-p.y, z-p.z, w-p.w);}
 };
@@ -114,7 +118,7 @@ struct Line
     Line(const Point3& point) {direction = point; moment = direction.Zero();}
     const bool operator ==(const Line& L) const {return (direction == L.direction && moment == L.moment);}
     const bool operator !=(const Line& L) const {return (direction != L.direction || moment != L.moment);}
-    string ToString(void) {return "{d = "+direction.ToString()+"| m  = "+moment.ToString()+"}";}
+    string ToString(void) {return "{d = "+direction.ToString()+"| m = "+moment.ToString()+"}";}
     void Print(void) {cout << "Line: " << (*this).ToString() << endl;}
 };
 
@@ -146,13 +150,12 @@ struct Plane
     Plane(const Vector3& n, float wk){x = n.x; y = n.y; z = n.z; w = wk;}
     //! @public @memberof Plane
     //! @brief Returns all components of the plane's normal vector as a Vector3 structure (x,y,z)
-    const Vector3 Normal(void) const {return Vector3(x,y,z);}
-    const bool operator ==(const Plane& f) const {return (f.x == x && f.y == y && f.z == z && f.w == w);}
-    const bool operator !=(const Plane& f) const {return !(f.x == x && f.y == y && f.z == z && f.w == w);}
-    string ToString(void)
+    const Vector3 Normal(void) const {return (reinterpret_cast<const Vector3&>(x));}
+    const bool operator ==(const Plane& f) const {return (CloseFloat(f.x, x) && CloseFloat(f.y, y) && CloseFloat(f.z, z) && CloseFloat(f.w, w));}
+    const bool operator !=(const Plane& f) const {return !((*this) == f);}
+    const string ToString(void) const
     {
-        Vector3 n(x,y,z);
-        return "{n = "+ n.ToString()+"| w = "+ to_string(w)+"}";
+        return "{n = "+(*this).Normal().ToString()+"| w = "+ to_string(w)+"}";
     }
     void Print(void) {cout << "Plane: " << (*this).ToString() << endl;}
 };
@@ -228,6 +231,7 @@ struct HomogeneousPoint3
     //! @brief Returns the Cartesian version of the HomogeneousPoint3 structure as a
     //!        Point3 structure (x/w, y/w, z/w)
     const Point3 toPoint3() const {return (Point3(x/w, y/w, z/w));}
+    const float operator *= (const HomogeneousPoint3& h) const {return (*this).toPoint3()*h.toPoint3();}
     const bool operator ==(const HomogeneousPoint3& h) const {return ((*this).toPoint3() == h.toPoint3());}
     const bool operator !=(const HomogeneousPoint3& h) const {return !((*this).toPoint3() == h.toPoint3());}
     string ToString(void)
@@ -241,29 +245,30 @@ struct HomogeneousPoint3
 struct Triangle2
 {
 protected:
+
     Point2 a, b, c;
     Vector2 ab, bc, ac;
     float abLength, bcLength, acLength;
+
+    void Update(void)
+    {
+        ab = b-a;
+        bc = c-b;
+        ac = c-a;
+        abLength = Magnitude(ab);
+        bcLength = Magnitude(bc);
+        acLength = Magnitude(ac);
+    }
 public:
     Triangle2() = default;
-    Triangle2(Point2 u, Point2 v, Point2 w)
-    {
-        a = u; b = v; c = w;
-        ab = b - a; bc = c - b; ac = c - a;
-        abLength = Magnitude(ab); bcLength = Magnitude(bc); acLength = Magnitude(ac);
-    }
+    Triangle2(Point2 u, Point2 v, Point2 w) {a = u; b = v; c = w; Update();}
     const float Area(void) const {return 0.5f*fabs(ab.x*ac.y - ac.x*ab.y);}
     const float Perimeter(void) const {return (abLength + bcLength + acLength);}
     const bool operator ==(const Triangle2& t) const {return (a == t.a && b == t.b && c == t.c);}
     const bool operator !=(const Triangle2& t) const {return !((*this) == t);}
-    string ToString(void) {return "{A: " + a.ToString() + "| B: " + b.ToString() + "| C: " + c.ToString() + "}\n";}
+    const string ToString(void) const {return "{A: " + a.ToString() + "| B: " + b.ToString() + "| C: " + c.ToString() + "}";}
     void Print(void) {cout << "Triangle2: " << (*this).ToString() << endl;}
-    void SetPoints(Point2 u, Point2 v, Point2 w)
-    {
-        a = u; b = v; c = w;
-        ab = b - a; bc = c - b; ac = c - a;
-        abLength = Magnitude(ab); bcLength = Magnitude(bc); acLength = Magnitude(ac);
-    }
+    void SetPoints(Point2 u, Point2 v, Point2 w) {a = u; b = v; c = w; Update();}
     Point2 GetVertexA(void) {return a;}
     Point2 GetVertexB(void) {return b;}
     Point2 GetVertexC(void) {return c;}
@@ -281,26 +286,26 @@ protected:
     Point3 a, b, c;
     Vector3 ab, bc, ac;
     float abLength, bcLength, acLength;
+
+    void Update(void)
+    {
+        ab = b-a;
+        bc = c-b;
+        ac = c-a;
+        abLength = Magnitude(ab);
+        bcLength = Magnitude(bc);
+        acLength = Magnitude(ac);
+    }
 public:
     Triangle3() = default;
-    Triangle3(Point3 u, Point3 v, Point3 w)
-    {
-        a = u; b = v; c = w;
-        ab = b - a; bc = c - b; ac = c - a;
-        abLength = Magnitude(ab); bcLength = Magnitude(bc); acLength = Magnitude(ac);
-    }
+    Triangle3(Point3 u, Point3 v, Point3 w) {a = u; b = v; c = w; Update();}
     const float Area(void) const {return 0.5f*Magnitude(CrossProduct(ab, ac));}
     const float Perimeter(void) const {return (abLength + bcLength + acLength);}
     const bool operator ==(const Triangle3& t) const {return (a == t.a && b == t.b && c == t.c);}
     const bool operator !=(const Triangle3& t) const {return !((*this) == t);}
-    string ToString(void) {return "{A: " + a.ToString() + "| B: " + b.ToString() + "| C: " + c.ToString() + "}\n";}
+    string ToString(void) {return "{A: " + a.ToString() + "| B: " + b.ToString() + "| C: " + c.ToString() + "}";}
     void Print(void) {cout << "Triangle3: " << (*this).ToString() << endl;}
-    void SetPoints(Point3 u, Point3 v, Point3 w)
-    {
-        a = u; b = v; c = w;
-        ab = b - a; bc = c - b; ac = c - a;
-        abLength = Magnitude(ab); bcLength = Magnitude(bc); acLength = Magnitude(ac);
-    }
+    void SetPoints(Point3 u, Point3 v, Point3 w) {a = u; b = v; c = w; Update();}
     Point3 GetVertexA(void) {return a;}
     Point3 GetVertexB(void) {return b;}
     Point3 GetVertexC(void) {return c;}
@@ -358,7 +363,7 @@ inline Point4 operator /(const Point4& p, float sc)
 
 inline float operator *(const Plane& p, const Vector3& v) {return (p.x*v.x + p.y*v.y + p.z*v.z);}
 inline float operator *(const Vector3& v, const Plane& p) {return (p*v);}
-inline float operator *(const Plane& p, const Point3& q) {return (p.x*q.x + p.y*q.y + p.z*q.z);}
+inline float operator *(const Plane& p, const Point3& q) {return (p.x*q.x + p.y*q.y + p.z*q.z + p.w);}
 inline float operator *(const Point3& q, const Plane& p) {return (p*q);}
 
 // * * * * * 3D HOMOGENEOUS POINTS * * * * * //
@@ -367,6 +372,8 @@ inline HomogeneousPoint3 operator +(const HomogeneousPoint3& p, const Homogeneou
     {return (HomogeneousPoint3(p.x*q.w + q.x*p.w, p.y*q.w + q.y*p.w, p.z*q.w + q.z*p.w, p.w*q.w));}
 inline HomogeneousPoint3 operator -(const HomogeneousPoint3& p, const HomogeneousPoint3& q)
     {return (HomogeneousPoint3(p.x*q.w - q.x*p.w, p.y*q.w - q.y*p.w, p.z*q.w - q.z*p.w, p.w*q.w));}
+inline float operator *(const HomogeneousPoint3& p, const HomogeneousPoint3& q)
+    {return (p.toPoint3()*q.toPoint3());}
 inline HomogeneousPoint3 operator *(const HomogeneousPoint3& p, float sc)
     {return (HomogeneousPoint3(p.x*sc, p.y*sc, p.z*sc, p.w));}
 inline HomogeneousPoint3 operator *(float sc, const HomogeneousPoint3& p) {return p*sc;}
@@ -457,14 +464,14 @@ inline float DistancePlanePoint(const Plane& f, const Point3& p)
  */
 inline float DistancePlaneOrigin(const Plane& f)
     {return (fabs(f.w)/Magnitude(f.Normal()));}
+
+// * * * * * CLOSEST POINTS * * * * * //
+
 /*!
  * @brief Yields the closest homogeneous point on a Line structure to the origin
  * @param L The line
  * @return [HomogeneousPoint3] The homogenous point on L closest to the origin
  */
-
-// * * * * * CLOSEST POINTS * * * * * //
-
 inline HomogeneousPoint3 ClosestPointToOrigin(const Line& L)
     {Vector3 toPoint = CrossProduct(L.direction, L.moment); return (HomogeneousPoint3(toPoint.x, toPoint.y, toPoint.z, L.direction*L.direction));}
 /*!
@@ -482,7 +489,7 @@ inline Plane MakePlane(const Line& L, const Vector3 direction)
 inline Plane MakePlane(const Line& L, const Point3 p)
     {return (Plane(CrossProduct(L.direction, Vector3(p.x,p.y,p.z)) + L.moment, -1.0f*(Vector3(p.x,p.y,p.z)*L.moment)));}
 inline Plane MakePlaneWithOrigin(const Line& L)
-    {return (Plane(L.moment, 0));}
+    {return (Plane(L.moment, 0.0f));}
 inline Plane FurthestPlaneFromOriginWithLine(const Line& L)
     {return (Plane(CrossProduct(L.moment, L.direction), L.moment*L.moment));}
 inline Plane MakePlane(const Line& L, const HomogeneousPoint3 p)
@@ -490,7 +497,7 @@ inline Plane MakePlane(const Line& L, const HomogeneousPoint3 p)
 inline Plane FurthestPlaneFromOriginWithHomogeneousPoint(const HomogeneousPoint3 p)
     {return (Plane(-1.0f*p.w*p.PointPart(), p.PointPart()*p.PointPart()));}
 inline Line MakeLine(const HomogeneousPoint3& p0, const HomogeneousPoint3& p1)
-    {return (Line(p0.w*Point3(p1.x, p1.y, p1.z) - p1.w*Point3(p0.x, p0.y, p0.z), CrossProduct(Vector3(p0.x, p0.y, p0.z), Vector3(p1.x, p1.y, p1.z))));}
+    {return (Line(p0.w*p1.PointPart() - p1.w*p0.PointPart(), CrossProduct(Vector3(p0.x, p0.y, p0.z), Vector3(p1.x, p1.y, p1.z))));}
 
 //---------------------------------------------------------------------------------------------
 //                                          METHODS
@@ -543,12 +550,13 @@ bool Intersection(const Line& L, const Plane& p, HomogeneousPoint3 *h);
 // * * * * * EXTRAS * * * * * //
 
 /*!
- * @brief Yields the closest point on a line to another point
- * @param v The vector defining the line
- * @param p The point to find closest point on line for
- * @return [Point3] Closest point on line (v) to point (p)
+ * @brief Yields the closest distance from a line (v)t+(p) to a point (q)
+ * @param v Parametric vector defining direction of the line
+ * @param p A point on the line
+ * @param q An arbitrary point to which we wish to find the closest distance to the line
+ * @return [float] Yields the closest distance beteen (q) and (vt+p)
  */
-Point3 ClosestDistanceToPoint(const Vector3& v, const Point3& p);
+float ClosestDistanceToPoint(const Vector3& v, const Point3& p, const Point3& q);
 /*!
  * @brief Translates a plane by use of a translation vector
  * @param f The plane to be translated

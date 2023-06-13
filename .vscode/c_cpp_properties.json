@@ -1,0 +1,25 @@
+{
+    "env": {
+        "projectIncludePath": [
+            "${workspaceFolder}",
+            "${workspaceFolder}\\Project\\Inc"
+        ],
+        "projectCompilerPath": "C:/msys64/mingw64/bin/g++.exe"
+    },
+    "configurations": [
+        {
+            "name": "Win64",
+            "includePath": [
+                "${projectIncludePath}",
+                "${workspaceFolder}\\Project\\Inc\\Math",
+                "${workspaceFolder}\\Project\\Inc\\UnitTest",
+                "${workspaceFolder}/**"
+            ],
+            "compilerPath": "C:/msys64/mingw64/bin/g++.exe",
+            "intelliSenseMode": "gcc-x64",
+            "cStandard": "c23",
+            "cppStandard": "c++23"
+        }
+    ],
+    "version": 4
+}

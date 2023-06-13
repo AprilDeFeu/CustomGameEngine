@@ -1,0 +1,27 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"stdexcept": "cpp",
+			"exception": "cpp",
+			"istream": "cpp",
+			"memory": "cpp",
+			"ostream": "cpp",
+			"streambuf": "cpp",
+			"system_error": "cpp",
+			"utility": "cpp",
+			"xlocale": "cpp",
+			"xlocinfo": "cpp",
+			"xstring": "cpp",
+			"xutility": "cpp",
+			"iostream": "cpp",
+			"string": "cpp",
+			"cfloat": "cpp",
+			"cmath": "cpp"
+		}
+	}
+}

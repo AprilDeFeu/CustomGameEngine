@@ -380,47 +380,85 @@ Transform4 Inverse(const Transform4& T)
     return T.Zero();
 }
 
-
-
-// * * * * * ORTHOGONALITY CHECK * * * * * //
-
-bool IsOrthogonal(const Matrix2& M)
+// * * * * * ADJUGATE * * * * * //
+Matrix3 Adjugate(const Matrix3& M)
 {
-    Matrix2 Id = M*Transpose(M);
-    for(int i=0; i<2; i++)
+    // Calculate using inverse if Det(M) > FLT_MIN, faster
+    if (fabs(Det(M)) > FLT_MIN) return (Det(M)*Inverse(M));
+    // Calculate using minor matrix, much slower
+    else
     {
-        for(int j=0; j<2; j++)
-        {
-            if ((i==j && Id(i,j)!=1) || ((i!=j && Id(i,j)!=0))) return false;
-        }
+        float m00 = Det(Matrix2(M(1,1), M(1,2), M(2,1), M(2,2)));
+        float m01 = Det(Matrix2(M(1,0), M(1,2), M(2,0), M(2,2)));
+        float m02 = Det(Matrix2(M(1,0), M(1,1), M(2,0), M(2,1)));
+        float m10 = Det(Matrix2(M(0,1), M(0,2), M(2,1), M(2,2)));
+        float m11 = Det(Matrix2(M(0,0), M(0,2), M(2,0), M(2,2)));
+        float m12 = Det(Matrix2(M(0,0), M(0,1), M(2,0), M(2,1)));
+        float m20 = Det(Matrix2(M(0,1), M(0,2), M(1,1), M(1,2)));
+        float m21 = Det(Matrix2(M(0,0), M(0,2), M(1,0), M(1,2)));
+        float m22 = Det(Matrix2(M(0,0), M(0,1), M(1,0), M(1,1)));
+
+        return Transpose(Matrix3( m00, -m01, m02,
+                                -m10, m11, -m12,
+                                m20, -m21, m22));
     }
-    return true;
 }
 
-bool IsOrthogonal(const Matrix3& M)
+Matrix4 Adjugate(const Matrix4& M)
 {
-    Matrix3 Id = M*Transpose(M);
-    for(int i=0; i<3; i++)
+    // Calculate using inverse if Det(M) > FLT_MIN, faster
+    if (fabs(Det(M)) > FLT_MIN) return (Det(M)*Inverse(M));
+    // Calculate using minor matrix, much slower
+    else
     {
-        for(int j=0; j<3; j++)
-        {
-            if ((i==j && Id(i,j)!=1) || ((i!=j && Id(i,j)!=0))) return false;
-        }
+        float m00 = Det(Matrix3(M(1,1), M(1,2), M(1,3), M(2,1), M(2,2), M(2,3), M(3,1), M(3,2), M(3,3)));
+        float m01 = Det(Matrix3(M(1,0), M(1,2), M(1,3), M(2,0), M(2,2), M(2,3), M(3,0), M(3,2), M(3,3)));
+        float m02 = Det(Matrix3(M(1,0), M(1,1), M(1,3), M(2,0), M(2,1), M(2,3), M(3,0), M(3,1), M(3,3)));
+        float m03 = Det(Matrix3(M(1,0), M(1,1), M(1,2), M(2,0), M(2,1), M(2,2), M(3,0), M(3,1), M(3,2)));
+        float m10 = Det(Matrix3(M(0,1), M(0,2), M(0,3), M(2,1), M(2,2), M(2,3), M(3,1), M(3,2), M(3,3)));
+        float m11 = Det(Matrix3(M(0,0), M(0,2), M(0,3), M(2,0), M(2,2), M(2,3), M(3,0), M(3,2), M(3,3)));
+        float m12 = Det(Matrix3(M(0,0), M(0,1), M(0,3), M(2,0), M(2,1), M(2,3), M(3,0), M(3,1), M(3,3)));
+        float m13 = Det(Matrix3(M(0,0), M(0,1), M(0,2), M(2,0), M(2,1), M(2,2), M(3,0), M(3,1), M(3,2)));
+        float m20 = Det(Matrix3(M(0,1), M(0,2), M(0,3), M(1,1), M(1,2), M(1,3), M(3,1), M(3,2), M(3,3)));
+        float m21 = Det(Matrix3(M(0,0), M(0,2), M(0,3), M(1,0), M(1,2), M(1,3), M(3,0), M(3,2), M(3,3)));
+        float m22 = Det(Matrix3(M(0,0), M(0,1), M(0,3), M(1,0), M(1,1), M(1,3), M(3,0), M(3,1), M(3,3)));
+        float m23 = Det(Matrix3(M(0,0), M(0,1), M(0,2), M(1,0), M(1,1), M(1,2), M(3,0), M(3,1), M(3,2)));
+        float m30 = Det(Matrix3(M(0,1), M(0,2), M(0,3), M(1,1), M(1,2), M(1,3), M(2,1), M(2,2), M(2,3)));
+        float m31 = Det(Matrix3(M(0,0), M(0,2), M(0,3), M(1,0), M(1,2), M(1,3), M(2,0), M(2,2), M(2,3)));
+        float m32 = Det(Matrix3(M(0,0), M(0,1), M(0,3), M(1,0), M(1,1), M(1,3), M(2,0), M(2,1), M(2,3)));
+        float m33 = Det(Matrix3(M(0,0), M(0,1), M(0,2), M(1,0), M(1,1), M(1,2), M(2,0), M(2,1), M(2,2)));
+
+        return Transpose(Matrix4( m00, -m01, m02, -m03,
+                                 -m10, m11, -m12, m13,
+                                 m20, -m21, m22, -m23,
+                                 -m30, m31, -m32, m33));
     }
-    return true;
 }
 
-bool IsOrthogonal(const Matrix4& M)
+// * * * * * SCALE MATRICES * * * * * //
+
+Matrix2 Scale(float sc, const Vector2& a)
 {
-    Matrix4 Id = M*Transpose(M);
-    for(int i=0; i<4; i++)
-    {
-        for(int j=0; j<4; j++)
-        {
-            if ((i==j && Id(i,j)!=1) || ((i!=j && Id(i,j)!=0))) return false;
-        }
-    }
-    return true;
+    sc -= 1.0f;
+    float x = a.x*sc, y=a.y*sc;
+    float aXY = x*a.y;
+    return Matrix2(x*a.x + 1.0f, aXY, aXY, y*a.y + 1.0f);
+}
+
+Matrix3 Scale(float sc, const Vector3& a)
+{
+    sc -= 1.0f;
+    float x = a.x*sc, y=a.y*sc, z = a.z*sc;
+    float aXY = x*a.y, aXZ = x*a.z, aYZ = y*a.z;
+    return Matrix3(x*a.x + 1.0f, aXY, aXZ, aXY, y*a.y + 1.0f, aYZ, aXZ, aYZ, z*a.z  + 1.0f);
+}
+
+Matrix4 Scale(float sc, const Vector4& a)
+{
+    sc -= 1.0f;
+    float x = a.x*sc, y=a.y*sc, z = a.z*sc, w = a.w*sc;
+    float aXY = x*a.y, aXZ = x*a.z, aXW = x*a.w, aYZ = y*a.z, aYW = y*a.w, aZW = z*a.w;
+    return Matrix4(x*a.x + 1.0f, aXY, aXZ, aXW, aXY, y*a.y + 1.0f, aYZ, aYW, aXZ, aYZ, z*a.z  + 1.0f, aZW, aXW, aYW, aZW, w*a.w + 1.0f);
 }
 
 // * * * * * SKEW MATRICES * * * * * //
@@ -463,6 +501,14 @@ Matrix4 Skew(float angle, const Vector4& u1, const Vector4& u2)
 
 // * * * * * ROTATIONS * * * * * //
 
+Matrix2 Rotate(float angle)
+{
+	float cs = cos(angle);
+	float sn = sin(angle);
+	
+	return Matrix2(cs, -sn, sn, cs);
+}
+
 Matrix3 RotateAboutX(float angle)
 {
     float cs = cos(angle);
@@ -493,8 +539,12 @@ Matrix3 RotateAboutZ(float angle)
                     0.0f, 0.0f, 1.0f));
 }
 
-Matrix3 RotateAboutAxis(float angle, const Vector3& axis)
+Matrix3 RotateAboutAxis(float angle, const Vector3& ax)
 {
+	// Forces normalization
+	Vector3 axis = ax;
+	if (Magnitude(axis) != 1.0f) axis = Normalize(ax);
+
     float cs = cos(angle);
     float sn = sin(angle);
     float delta = 1.0f - cs;
@@ -504,7 +554,7 @@ Matrix3 RotateAboutAxis(float angle, const Vector3& axis)
     float z = delta * axis.z;
 
     float aXY = x * axis.y;
-    float aXZ = z * axis.z;
+    float aXZ = x * axis.z;
     float aYZ = y * axis.z;
 
     return (Matrix3(cs+x * axis.x, aXY-sn * axis.z, aXZ + sn*axis.y,
@@ -514,8 +564,18 @@ Matrix3 RotateAboutAxis(float angle, const Vector3& axis)
 
 // * * * * * REFLECTION/INVOLUTION * * * * * //
 
-Matrix3 Reflection(const Vector3& u)
+Matrix2 Reflection(float angle)
 {
+    float cs = cos(2.0f*angle);
+    float sn = sin(2.0f*angle);
+    return Matrix2(cs, sn, sn, -cs);
+}
+
+Matrix3 Reflection(const Vector3& v)
+{
+    Vector3 u = v;
+    if (Magnitude(v) != 1.0f) u = Normalize(v);
+
     float x = u.x * -2.0f;
     float y = u.y * -2.0f;
     float z = u.z * -2.0f;
@@ -528,22 +588,61 @@ Matrix3 Reflection(const Vector3& u)
                     uXZ, uYZ, z * u.z+1.0f));
 }
 
-Transform4 Reflection(const Plane& f)
+Matrix4 Reflection(const Vector4& v)
 {
-    float x = f.x*(-2.0f);
-    float y = f.y*(-2.0f);
-    float z = f.z*(-2.0f);
-    float nxy = x*f.y;
-    float nxz = x*f.z;
-    float nyz = y*f.z;
+    Vector4 u = v;
+    if (Magnitude(v) != 1.0f) u = Normalize(v);
 
-    return (Transform4( x*f.x + 1.0f, nxy, nxz, x*f.w,
-                        nxy, y*f.y + 1.0f, nyz, y*f.w,
-                        nxz, nyz, z*f.z + 1.0f, z*f.w));
+    float x = u.x * -2.0f;
+    float y = u.y * -2.0f;
+    float z = u.z * -2.0f;
+	float w = u.w * -2.0f;
+    float uXY = x * u.y;
+    float uXZ = x * u.z;
+	float uXW = x * u.w;
+    float uYZ = y * u.z;
+	float uYW = y * u.w;
+	float uZW = z * u.w;
+
+    return (Matrix4(x*u.x + 1.0f, uXY, uXZ, uXW,
+                    uXY, y*u.y + 1.0f, uYZ, uYW,
+                    uXZ, uYZ, z*u.z + 1.0f, uZW,
+					uXW, uYW, uZW, w*u.w + 1.0f));
 }
 
-Matrix3 Involution(const Vector3& u)
+Transform4 Reflection(const Plane& f)
 {
+    Vector3 n = f.Normal();
+    if (Magnitude(n)!= 1.0f) n = Normalize(n);
+
+    float x = n.x*(-2.0f);
+    float y = n.y*(-2.0f);
+    float z = n.z*(-2.0f);
+    float nxy = x*n.y;
+    float nxz = x*n.z;
+    float nyz = y*n.z;
+
+    return (Transform4( x*n.x + 1.0f, nxy, nxz, x*f.w,
+                        nxy, y*n.y + 1.0f, nyz, y*f.w,
+                        nxz, nyz, z*n.z + 1.0f, z*f.w));
+}
+
+Matrix2 Involution(const Vector2& v)
+{
+    Vector2 u = v;
+    if (Magnitude(v) != 1.0f) u = Normalize(v);
+
+    float x = u.x * 2.0f;
+    float y = u.y * 2.0f;
+    float uXY = x*u.y;
+    return Matrix2(x*u.x - 1.0f, uXY, uXY, y*u.y - 1.0f);
+}
+
+Matrix3 Involution(const Vector3& v)
+{
+    Vector3 u = v;
+    if (Magnitude(v) != 1.0f) u = Normalize(v);
+
     float x = u.x * 2.0f;
     float y = u.y * 2.0f;
     float z = u.z * 2.0f;
@@ -554,6 +653,28 @@ Matrix3 Involution(const Vector3& u)
     return (Matrix3(x * u.x-1.0f, uXY, uXZ,
                     uXY, y * u.y-1.0f, uYZ,
                     uXZ, uYZ, z * u.z-1.0f));
+}
+
+Matrix4 Involution(const Vector4& v)
+{
+    Vector4 u = v;
+    if (Magnitude(v) != 1.0f) u = Normalize(v);
+
+    float x = u.x * 2.0f;
+    float y = u.y * 2.0f;
+    float z = u.z * 2.0f;
+    float w = u.w * 2.0f;
+    float uXY = x * u.y;
+    float uXZ = x * u.z;
+    float uXW = x * u.w;
+    float uYZ = y * u.z;
+    float uYW = y * u.w;
+    float uZW = z * u.w;
+
+    return (Matrix4(x * u.x-1.0f, uXY, uXZ, uXW,
+                    uXY, y * u.y-1.0f, uYZ, uYW,
+                    uXZ, uYZ, z * u.z-1.0f, uZW,
+                    uXW, uYW, uZW, w * u.w-1.0f));
 }
 
 // * * * * * EXTRAS * * * * * //

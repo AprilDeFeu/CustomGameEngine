@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include "Math\Helpers.h"
 
 using namespace std;
 
@@ -41,8 +42,8 @@ struct Vector2
     float operator *=(const Vector2& vec) {return x * vec.x + y * vec.y;}
     Vector2& operator *=(float scalar) {x *= scalar; y *= scalar; return (*this);}
     Vector2& operator /=(float scalar) {float sc = (1.0f/scalar); x *= sc; y *= sc; return (*this);}
-    const bool operator ==(const Vector2& vec) const {return (x==vec.x && y==vec.y);}
-    const bool operator !=(const Vector2& vec) const {return (x!=vec.x || y!=vec.y);}
+    const bool operator ==(const Vector2& vec) const {return (CloseFloat(x,vec.x) && CloseFloat(y, vec.y));}
+    const bool operator !=(const Vector2& vec) const {return !((*this)==vec);}
     float& operator [](int i) {return ((&x)[i]);}
     const float& operator [](int i) const {return ((&x)[i]);}
     //! @public @memberof Vector2
@@ -50,7 +51,7 @@ struct Vector2
     const Vector2 Zero(void) const {return Vector2(0.0f, 0.0f);}
     //! @public @memberof Vector2
     //! @brief Yields this Vector2 as a string representation
-    string ToString(void) {return "(" + to_string(x) + ", " + to_string(y) + ")";}
+    const string ToString(void) const {return "(" + to_string(x) + ", " + to_string(y) + ")";}
     //! @public @memberof Vector2
     //! @brief Prints this Vector2
     void Print(void) {cout << "Vector2: " << (*this).ToString() << "\n";}
@@ -79,8 +80,8 @@ struct Vector3
     Vector3& operator *=(float scalar) {x *= scalar; y *= scalar; z *= scalar; return (*this);}
     Vector3& operator /=(float scalar)
     {float sc = (1.0f/scalar); x *= sc; y *= sc; z *= sc; return (*this);}
-    const bool operator ==(const Vector3& vec) const {return (x==vec.x && y==vec.y && z==vec.z);}
-    const bool operator !=(const Vector3& vec) const {return (x!=vec.x || y!=vec.y || z!=vec.z);}
+    const bool operator ==(const Vector3& vec) const {return (CloseFloat(x, vec.x) && CloseFloat(y, vec.y) && CloseFloat(z, vec.z));}
+    const bool operator !=(const Vector3& vec) const {return !((*this) == vec);}
     float& operator [](int i) {return ((&x)[i]);}
     const float& operator [](int i) const {return ((&x)[i]);}
     //! @public @memberof Vector3
@@ -88,7 +89,7 @@ struct Vector3
     const Vector3 Zero(void) const {return Vector3(0.0f, 0.0f, 0.0f);}
     //! @public @memberof Vector3
     //! @brief Yields this Vector3 as a string representation
-    string ToString(void) {return "(" + to_string(x) + ", " + to_string(y) + ", " + to_string(z) + ")";}
+    const string ToString(void) const {return "(" + to_string(x) + ", " + to_string(y) + ", " + to_string(z) + ")";}
     //! @public @memberof Vector3
     //! @brief Prints this Vector3
     void Print(void) {cout << "Vector3: " << (*this).ToString() << "\n";}
@@ -119,8 +120,8 @@ struct Vector4
     Vector4& operator *=(float scalar) {x *= scalar; y *= scalar; z *= scalar; w *= scalar; return (*this);}
     float operator *=(const Vector4& vec) {return x * vec.x + y * vec.y + z * vec.z + w * vec.w;}
     Vector4& operator /=(float scalar) {float sc = (1.0f/scalar); x *= sc; y *= sc; z *= sc; w *= sc; return (*this);}
-    const bool operator ==(const Vector4& vec) const {return (x==vec.x && y==vec.y && z==vec.z && w==vec.w);}
-    const bool operator !=(const Vector4& vec) const {return (x!=vec.x || y!=vec.y || z!=vec.z || w!=vec.w);}
+    const bool operator ==(const Vector4& vec) const {return (CloseFloat (x, vec.x) && CloseFloat(y, vec.y) && CloseFloat(z, vec.z) && CloseFloat(w, vec.w));}
+    const bool operator !=(const Vector4& vec) const {return (!((*this) == (vec)));}
     float& operator [](int i) {return ((&x)[i]);}
     const float& operator [](int i) const {return ((&x)[i]);}
     //! @public @memberof Vector4
@@ -128,7 +129,7 @@ struct Vector4
     const Vector4 Zero(void) const {return Vector4(0.0f, 0.0f, 0.0f, 0.0f);}
     //! @public @memberof Vector4
     //! @brief Yields this Vector4 as a string representation
-    string ToString(void)
+    const string ToString(void) const
     {return "(" + to_string(x) + ", " + to_string(y) +
             ", " + to_string(z) + ", " + to_string(w) + ")";}
     //! @public @memberof Vector4
@@ -141,7 +142,13 @@ struct Vector4
 //---------------------------------------------------------------------------------------------
 
 // * * * * * POWER * * * * * //
-double Power(double base, int exponent, double accumulator);
+/*!
+ * @brief Tail-recursive power function.
+ * @see Power(double base, double int, int exp) in Helpers.h for more details.
+ * @param base The base value to exponentiate
+ * @param exponent The exponent
+ * @return [double] base^exponent : base to the power of exponent
+ */
 inline double Power(double base, int exponent) {return Power(base, exponent, 1.0);}
 
 // * * * * * INNER PRODUCTS * * * * * //
@@ -300,6 +307,21 @@ float Angle(const Vector3& v1, const Vector3& v2);
 //! @param v2 The second vector
 //! @return [float] Angle between vectors
 float Angle(const Vector4& v1, const Vector4& v2);
+//! @brief Calculates the angle (in degrees) between two Vector2 structures
+//! @param v1 The first vector
+//! @param v2 The second vector
+//! @return [float] Angle between vectors
+inline float AngleDegrees(const Vector2& v1, const Vector2& v2) {return (Angle(v1,v2)*180.0f / PI);}
+//! @brief Calculates the angle (in degrees) between two Vector3 structures
+//! @param v1 The first vector
+//! @param v2 The second vector
+//! @return [float] Angle between vectors
+inline float AngleDegrees(const Vector3& v1, const Vector3& v2) {return (Angle(v1,v2)*180.0f / PI);}
+//! @brief Calculates the angle (in degrees) between two Vector4 structures
+//! @param v1 The first vector
+//! @param v2 The second vector
+//! @return [float] Angle between vectors
+inline float AngleDegrees(const Vector4& v1, const Vector4& v2) {return (Angle(v1,v2)*180.0f / PI);}
 
 // * * * * * PROJECTIONS * * * * * //
 

@@ -9,18 +9,14 @@ using namespace std;
 
 int main()
 {
-    TestVector2 v2;
-    TestVector3 v3;
-    TestVector4 v4;
-    TestPoint2 p2;
-    TestPoint3 p3;
+    TestVector testV;
+    TestPoint testP;
+    TestGeometry testG;
+    TestMatrix testM;
 
-
-    v2.AllTests();
-    v3.AllTests();
-    v4.AllTests();
-    p2.AllTests();
-    p3.AllTests();
-
+    testV.AllVectorTests();
+    testP.AllPointTests();
+    testG.AllGeometryTests();
+    testM.AllMatrixTests();
     return 0;
 }

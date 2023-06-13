@@ -2,6 +2,8 @@
 #include <stdexcept>
 #include <cmath>
 #include <iostream>
+#include <string>
+#include "Math\Helpers.h"
 #include "Math\Vectors.h"
 #include "Math\Geometry.h"
 
@@ -10,7 +12,8 @@
 //---------------------------------------------------------------------------------------------
 struct NonInvertibleE : public runtime_error
 {
-    NonInvertibleE() : runtime_error("Math error: Given matrix is non-invertible.\n") 
+
+    NonInvertibleE() : runtime_error("Math error: Given matrix is non-invertible.\n")
     {};
 };
 struct NonDiagonalizableE : public runtime_error
@@ -21,6 +24,7 @@ struct NonDiagonalizableE : public runtime_error
 //---------------------------------------------------------------------------------------------
 //                                         CLASSES
 //---------------------------------------------------------------------------------------------
+
 
 /*!
  * @class Matrix2
@@ -44,7 +48,7 @@ public:
         m[1][0] = a01; m[1][1] = a11;
     }
     //! @public @memberof Matrix2
-    //! @brief Creates an Matrix2 structure with 2 Vector2 components
+    //! @brief Creates an Matrix2 structure with 2 Vector2 components as columns
     Matrix2(const Vector2& a, const Vector2& b)
     {
         m[0][0] = a.x; m[0][1] = a.y;
@@ -143,7 +147,7 @@ public:
     m[1][0] = a01; m[1][1] = a11; m[1][2] = a21;
     m[2][0] = a02; m[2][1] = a12; m[2][2] = a22;}
     //! @public @memberof Matrix3
-    //! @brief Construct a Matrix3 structure with 4 Vector3 components
+    //! @brief Construct a Matrix3 structure with 3 Vector3 components as columns
     Matrix3(const Vector3& a, const Vector3& b, const Vector3& c)
     {m[0][0] = a.x; m[0][1] = a.y; m[0][2] = a.z;
     m[1][0] = b.x; m[1][1] = b.y; m[1][2] = b.z;
@@ -254,7 +258,7 @@ public:
     m[2][0] = a02; m[2][1] = a12; m[2][2] = a22; m[2][3] = a32;
     m[3][0] = a03; m[3][1] = a13; m[3][2] = a23; m[3][3] = a33;}
     //! @public @memberof Matrix4
-    //! @brief Construct a Matrix4 structure with 4 Vector4 components
+    //! @brief Construct a Matrix4 structure with 4 Vector4 components as columns
     Matrix4(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& d)
     {m[0][0] = a.x; m[0][1] = a.y; m[0][2] = a.z; m[0][3] = a.w;
     m[1][0] = b.x; m[1][1] = b.y; m[1][2] = b.z; m[1][3] = b.w;
@@ -946,7 +950,7 @@ inline float Trace(const Matrix4& M) {return (M(0,0) + M(1,1) + M(2,2) + M(3,3))
 /*! @brief Calculates the inverse of a 2x2 matrix
  *  @param[in] M 2x2 matrix to find the inverse for
  *  @return [Matrix2] Inverse of 2x2 matrix
- *  @warning If the determinant of M is zero, 
+ *  @warning If the determinant of M is zero,
  *  this function will throw an exception saying M is non-invertible
  */
 Matrix2 Inverse(const Matrix2& M);
@@ -987,12 +991,12 @@ inline Matrix2 Adjugate(const Matrix2& M)
  *  @param[in] M 3x3 matrix to find the adjugate for
  *  @return [Matrix3] Adjugate of 3x3 matrix
  */
-inline Matrix3 Adjugate(const Matrix3& M) {return (Det(M)*Inverse(M));}
+Matrix3 Adjugate(const Matrix3& M);
 /*! @brief Calculates the adjugate of a 4x4 matrix
  *  @param[in] M 4x4 matrix to find the adjugate for
  *  @return [Matrix4] Adjugate of 4x4 matrix
  */
-inline Matrix4 Adjugate(const Matrix4& M) {return (Det(M)*Inverse(M));}
+Matrix4 Adjugate(const Matrix4& M);
 
 // Cofactor
 
@@ -1017,14 +1021,14 @@ inline Matrix4 Cofactor(const Matrix4& M) {return (Transpose(Adjugate(M)));}
 /*! @brief Generates 2x2 matrix of scale factors for x, y axes
  *  @param[in] scaleX Scale factor for the X axis
  *  @param[in] scaleY Scale factor for the Y axis
- *  @return Matrix2 scale data structure.
+ *  @return [Matrix2] Scale data structure.
  */
 inline Matrix2 Scale(float scaleX, float scaleY) {return (Matrix2(scaleX, 0.0f, 0.0f, scaleY));}
 /*! @brief Generates 3x3 matrix of scale factors for x, y, z axes
  *  @param[in] scaleX Scale factor for the X axis
  *  @param[in] scaleY Scale factor for the Y axis
  *  @param[in] scaleZ Scale factor for the Z axis
- *  @return [Matrix3] scale data structure.
+ *  @return [Matrix3] Scale data structure.
  */
 inline Matrix3 Scale(float scaleX, float scaleY, float scaleZ)
 {return (Matrix3(scaleX, 0.0f, 0.0f,
@@ -1043,6 +1047,28 @@ inline Matrix4 Scale(float scaleW, float scaleX, float scaleY, float scaleZ)
                 0.0f, 0.0f, scaleY, 0.0f,
                 0.0f, 0.0f, 0.0f, scaleZ));}
 
+/*!
+ * @brief Generates 2x2 matrix of scale factor sc along an arbitary axis of unit length
+ * @param sc Scaling factor
+ * @param a Arbitrary axis given as a Vector2 structure
+ * @return [Matrix2] Scale data sctucture.
+ */
+Matrix2 Scale(float sc, const Vector2& a);
+/*!
+ * @brief Generates 3x3 matrix of scale factor sc along an arbitary axis of unit length
+ * @param sc Scaling factor
+ * @param a Arbitrary axis given as a Vector3 structure
+ * @return [Matrix3] Scale data sctucture.
+ */
+Matrix3 Scale(float sc, const Vector3& a);
+/*!
+ * @brief Generates 4x4 matrix of scale factor sc along an arbitary axis of unit length
+ * @param sc Scaling factor
+ * @param a Arbitrary axis given as a Vector4 structure
+ * @return [Matrix4] Scale data sctucture.
+ */
+Matrix4 Scale(float sc, const Vector4& a);
+
 //---------------------------------------------------------------------------------------------
 //                                        MEHTODS
 //---------------------------------------------------------------------------------------------
@@ -1053,83 +1079,159 @@ inline Matrix4 Scale(float scaleW, float scaleX, float scaleY, float scaleZ)
  *  @param[in] M 2x2 matrix to check for orthogonality
  *  @return [bool] stating whether M is orthogonal
  */
-bool IsOrthogonal(const Matrix2& M);
+inline bool IsOrthogonal(const Matrix2& M) {return (M*Transpose(M) == M.Identity());}
 /*! @brief Checks if 3x3 matrix is orthogonal
  *  @param[in] M 3x3 matrix to check for orthogonality
  *  @return [bool] stating whether M is orthogonal
  */
-bool IsOrthogonal(const Matrix3& M);
+inline bool IsOrthogonal(const Matrix3& M) {return (M*Transpose(M) == M.Identity());}
 /*! @brief Checks if 4x4 matrix is orthogonal
  *  @param[in] M 4x4 matrix to check for orthogonality
  *  @return [bool] Whether M is orthogonal
  */
-bool IsOrthogonal(const Matrix4& M);
+inline bool IsOrthogonal(const Matrix4& M) {return (M*Transpose(M) == M.Identity());}
 
 // Skew matrix
-/*! @brief  Generates 2x2 skew matrix at an angle along a given direction
- *  @param angle The skew angle
+/*! @brief  Generates 2x2 skew matrix at an angle (radians) along a given direction
+ *  @param angle The skew angle in radians
  *  @param u1 Unit vector giving first direction, must be orthogonal to u2
  *  @param u2 Unit vector giving second direction, must be orthogonal to u1
  *  @return [Matrix2] Skew matrix for given angle and orthogonal unit vectors
  */
 Matrix2 Skew(float angle, const Vector2& u1, const Vector2& u2);
-/*! @brief  Generates 3x3 skew matrix at an angle along a given direction
- *  @param angle The skew angle
+/*! @brief  Generates 3x3 skew matrix at an angle (radians) along a given direction
+ *  @param angle The skew angle in radians
  *  @param u1 Unit vector giving first direction, must be orthogonal to u2
  *  @param u2 Unit vector giving second direction, must be orthogonal to u1
  *  @return [Matrix3] Skew matrix for given angle and orthogonal unit vectors
  */
 Matrix3 Skew(float angle, const Vector3& u1, const Vector3& u2);
-/*! @brief  Generates 4x4 skew matrix at an angle along a given direction
- *  @param angle The skew angle
+/*! @brief  Generates 4x4 skew matrix at an angle (radians) along a given direction
+ *  @param angle The skew angle in radians
  *  @param u1 Unit vector giving first direction, must be orthogonal to u2
  *  @param u2 Unit vector giving second direction, must be orthogonal to u1
  *  @return [Matrix4] Skew matrix for given angle and orthogonal unit vectors
  */
 Matrix4 Skew(float angle, const Vector4& u1, const Vector4& u2);
+/*! @brief  Generates 2x2 skew matrix at an angle (degrees) along a given direction
+ *  @param angle The skew angle in degrees
+ *  @param u1 Unit vector giving first direction, must be orthogonal to u2
+ *  @param u2 Unit vector giving second direction, must be orthogonal to u1
+ *  @return [Matrix2] Skew matrix for given angle and orthogonal unit vectors
+ */
+inline Matrix2 SkewDegrees(float angle, const Vector2& u1, const Vector2& u2) {return (Skew(PI*angle/180.0f, u1, u2));}
+/*! @brief  Generates 3x3 skew matrix at an angle (degrees) along a given direction
+ *  @param angle The skew angle in degrees
+ *  @param u1 Unit vector giving first direction, must be orthogonal to u2
+ *  @param u2 Unit vector giving second direction, must be orthogonal to u1
+ *  @return [Matrix3] Skew matrix for given angle and orthogonal unit vectors
+ */
+inline Matrix3 SkewDegrees(float angle, const Vector3& u1, const Vector3& u2) {return (Skew(PI*angle/180.0f, u1, u2));}
+/*! @brief  Generates 4x4 skew matrix at an angle (degrees) along a given direction
+ *  @param angle The skew angle in degrees
+ *  @param u1 Unit vector giving first direction, must be orthogonal to u2
+ *  @param u2 Unit vector giving second direction, must be orthogonal to u1
+ *  @return [Matrix4] Skew matrix for given angle and orthogonal unit vectors
+ */
+inline Matrix4 SkewDegrees(float angle, const Vector4& u1, const Vector4& u2) {return (Skew(PI*angle/180.0f, u1, u2));}
 
 // Rotations
 
+/*!
+ * @brief Generates a rotation matrix on the XY plane.
+ * @param[in] angle The angle of rotation (radians)
+ * @return [Matrix2] Rotation matrix on XY plane at angle.
+ */
+Matrix2 Rotate(float angle);
+/*!
+ * @brief Generates a rotation matrix on the XY plane.
+ * @param[in] angle The angle of rotation (degrees)
+ * @return [Matrix2] Rotation matrix on XY plane at angle.
+ */
+inline Matrix2 RotateDegrees(float angle) {return Rotate(angle*(PI/180.0f));}
+
 /*! @brief Generates rotation matrix about the X axis
- *  @param[in] angle The angle of rotation
+ *  @param[in] angle The angle of rotation (radians)
  *  @return [Matrix3] Rotation matrix about X axis at angle
  */
 Matrix3 RotateAboutX(float angle);
 /*! @brief Generates rotation matrix about the Y axis
- *  @param[in] angle The angle of rotation
+ *  @param[in] angle The angle of rotation (radians)
  *  @return [Matrix3] Rotation matrix about Y axis at angle
  */
 Matrix3 RotateAboutY(float angle);
 /*! @brief Generates rotation matrix about the Z axis
- *  @param[in] angle The angle of rotation
+ *  @param[in] angle The angle of rotation (radians)
  *  @return [Matrix3] Rotation matrix about Z axis at angle
  */
 Matrix3 RotateAboutZ(float angle);
 /*! @brief Generates rotation matrix about an arbitrary axis
+ *  @param[in] angle The angle of rotation (radians)
+ *  @param[in] ax An arbitrary axis to rotate about
+ *  @return [Matrix3] Rotation matrix about axis at angle
+ */
+Matrix3 RotateAboutAxis(float angle, const Vector3& ax);
+
+/*! @brief Generates rotation matrix about the X axis
+ *  @param[in] angle The angle of rotation (degrees)
+ *  @return [Matrix3] Rotation matrix about X axis at angle
+ */
+inline Matrix3 RotateAboutXDegrees(float angle)  {return (RotateAboutX(PI*angle/180.0f));}
+/*! @brief Generates rotation matrix about the Y axis
  *  @param[in] angle The angle of rotation
+ *  @return [Matrix3] Rotation matrix about Y axis at angle
+ */
+inline Matrix3 RotateAboutYDegrees(float angle) {return (RotateAboutY(PI*angle/180.0f));}
+/*! @brief Generates rotation matrix about the Z axis
+ *  @param[in] angle The angle of rotation (degrees)
+ *  @return [Matrix3] Rotation matrix about Z axis at angle
+ */
+inline Matrix3 RotateAboutZDegrees(float angle) {return (RotateAboutZ(PI*angle/180.0f));}
+/*! @brief Generates rotation matrix about an arbitrary axis
+ *  @param[in] angle The angle of rotation (degrees)
  *  @param[in] axis An arbitrary axis to rotate about
  *  @return [Matrix3] Rotation matrix about axis at angle
  */
-Matrix3 RotateAboutAxis(float angle, const Vector3& axis);
+inline Matrix3 RotateAboutAxisDegrees(float angle, const Vector3& axis) {return (RotateAboutAxis(PI*angle/180.0f, axis));}
 
 // Reflection/Involution
 
-/*! @brief Generates reflection matrix through the perpendicular plane of a given unit vector
- *  @param[in] u Unit vector used to define plane of reflection
- *  @return [Matrix3] Reflection matrix for unit vector
+/*! @brief Generates reflection matrix through the perpendicular plane of a given vector
+ *  @param[in] v Vector used to define plane of reflection
+ *  @return [Matrix2] Reflection matrix for v
  */
-Matrix3 Reflection(const Vector3& u);
+Matrix2 Reflection(float angle);
+/*! @brief Generates reflection matrix through the perpendicular plane of a given vector
+ *  @param[in] v Vector used to define plane of reflection
+ *  @return [Matrix3] Reflection matrix for v
+ */
+Matrix3 Reflection(const Vector3& v);
+/*! @brief Generates reflection matrix through the perpendicular plane of a given vector
+ *  @param[in] v Vector used to define plane of reflection
+ *  @return [Matrix4] Reflection matrix for v
+ */
+Matrix4 Reflection(const Vector4& v);
 /*!
  * @brief Generates a transform of a reflection through a given normalized plane
  * @param f The (presumably) normalized plane
  * @return [Transform4] 4x4 matrix representing the reflection transform through f
  */
 Transform4 Reflection(const Plane& f);
-/*! @brief Generates involution matrix through the perpendicular plane of a given unit vector
- *  @param[in] u Unit vector used to define plane of involution
- *  @return [Matrix3] Involution matrix for unit vector
+/*! @brief Generates involution matrix through the perpendicular plane of a given vector
+ *  @param[in] v Vector used to define plane of involution
+ *  @return [Matrix3] Involution matrix for v
  */
-Matrix3 Involution(const Vector3& u);
+Matrix2 Involution(const Vector2& v);
+/*! @brief Generates involution matrix through the perpendicular plane of a given vector
+ *  @param[in] v Vector used to define plane of involution
+ *  @return [Matrix3] Involution matrix for v
+ */
+Matrix3 Involution(const Vector3& v);
+/*! @brief Generates involution matrix through the perpendicular plane of a given vector
+ *  @param[in] v Vector used to define plane of involution
+ *  @return [Matrix4] Involution matrix for v
+ */
+Matrix4 Involution(const Vector4& v);
 
 // Extras
 
