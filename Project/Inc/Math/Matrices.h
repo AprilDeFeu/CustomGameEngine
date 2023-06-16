@@ -21,6 +21,11 @@ struct NonDiagonalizableE : public runtime_error
     NonDiagonalizableE() : runtime_error("Math error: Given matrix is not diagonalizable.\n")
     {};
 };
+struct NonOrthogonalE : public runtime_error
+{
+    NonOrthogonalE() : runtime_error("Math error: Given vectors are not orthogonal, cannot create skew.\n")
+    {};
+};
 //---------------------------------------------------------------------------------------------
 //                                         CLASSES
 //---------------------------------------------------------------------------------------------
@@ -425,16 +430,6 @@ struct Transform3 : Matrix3
         m[2][0] -= T(0,2); m[2][1] -= T(1,2);
         return (*this);
     }
-    Transform3& operator *=(const Transform3& T)
-    {
-        m[0][0] = m[0][0]*T(0,0) + m[1][0]*T(1,0);
-        m[1][0] = m[0][0]*T(0,1) + m[1][0]*T(1,1);
-        m[2][0] = m[0][0]*T(0,2) + m[1][0]*T(1,2) + m[2][0];
-        m[0][1] = m[0][1]*T(0,0) + m[1][1]*T(1,0);
-        m[1][1] = m[0][1]*T(0,1) + m[1][1]*T(1,1);
-        m[2][1] = m[0][1]*T(0,2) + m[1][1]*T(1,2) + m[2][1];
-        return (*this);
-    }
     Transform3& operator *=(float f)
     {
         m[0][0] *= f; m[0][1] *= f;
@@ -451,6 +446,15 @@ struct Transform3 : Matrix3
         return (*this);
     }
     const Transform3 Zero() const  {return Transform3( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);}
+    const Transform3 Identity() const
+    {
+        return Transform3(Vector2(1,0), Vector2(0,1), Point2(0,0));
+    }
+	void Print(void)
+    {
+        cout << "Transform3: \n" << (*this).ToString();
+    }
+    Vector2& Col(int j) {return *(reinterpret_cast<Vector2 *>(m[j]));}
 
 };
 /*!
@@ -540,22 +544,6 @@ struct Transform4 : Matrix4
         m[3][0] -= T(0,3); m[3][1] -= T(1,3); m[3][2] -= T(2,3);
         return (*this);
     }
-    Transform4& operator *=(const Transform4& T)
-    {
-        m[0][0] = m[0][0]*T(0,0) + m[1][0]*T(1,0) + m[2][0]*T(2,0);
-        m[1][0] = m[0][0]*T(0,1) + m[1][0]*T(1,1) + m[2][0]*T(2,1);
-        m[2][0] = m[0][0]*T(0,2) + m[1][0]*T(1,2) + m[2][0]*T(2,2);
-        m[3][0] = m[0][0]*T(0,3) + m[1][0]*T(1,3) + m[2][0]*T(2,3) + m[3][0];
-        m[0][1] = m[0][1]*T(0,0) + m[1][1]*T(1,0) + m[2][1]*T(2,0);
-        m[1][1] = m[0][1]*T(0,1) + m[1][1]*T(1,1) + m[2][1]*T(2,1);
-        m[2][1] = m[0][1]*T(0,2) + m[1][1]*T(1,2) + m[2][1]*T(2,2);
-        m[3][1] = m[0][1]*T(0,3) + m[1][1]*T(1,3) + m[2][1]*T(2,3) + m[3][1];
-        m[0][2] = m[0][2]*T(0,0) + m[1][2]*T(1,0) + m[2][2]*T(2,0);
-        m[1][2] = m[0][2]*T(0,1) + m[1][2]*T(1,1) + m[2][2]*T(2,1);
-        m[2][2] = m[0][2]*T(0,2) + m[1][2]*T(1,2) + m[2][2]*T(2,2);
-        m[3][2] = m[0][2]*T(0,3) + m[1][2]*T(1,3) + m[2][2]*T(2,3) + m[3][2];
-        return (*this);
-    }
     Transform4& operator *=(float f)
     {
         m[0][0] *= f; m[0][1] *= f; m[0][2] *= f;
@@ -573,11 +561,20 @@ struct Transform4 : Matrix4
         m[3][0] *= sc; m[3][1] *= sc; m[3][2] *= sc;
         return (*this);
     }
+    Vector3& Col(int j) {return *(reinterpret_cast<Vector3 *>(m[j]));}
+    const Transform4 Identity() const
+    {
+        return Transform4(Vector3(1,0,0), Vector3(0,1,0), Vector3(0,0,1), Point3(0,0,0));
+    }
     const Transform4 Zero() const
     {
         Vector3 v;
         Point3 p;
         return Transform4(v.Zero(), v.Zero(), v.Zero(), p.Zero());
+    }
+	void Print(void)
+    {
+        cout << "Transform4: \n" << (*this).ToString();
     }
 };
 /*!
@@ -608,7 +605,7 @@ struct Quaternion
     //! @public @memberof Quaternion
     //! @brief Gets the components of the quaternion without the scalar component as a Vector3 structure
     const Vector3 GetVector(void) const {return (Vector3(x,y,z));}
-    const bool operator ==(const Quaternion& q) const {return (x==q.x && y==q.y && z==q.z && w==q.w);}
+    const bool operator ==(const Quaternion& q) const {return (CloseFloat(x, q.x) && CloseFloat(y, q.y) && CloseFloat(z, q.z) && CloseFloat(w, q.w));}
     const bool operator !=(const Quaternion& q) const {return !(*this == q);}
     Quaternion& operator +=(const Quaternion& q) {x += q.x; y += q.y; z += q.z; w += q.w; return (*this);}
     Quaternion& operator -=(const Quaternion& q) {x -= q.x; y -= q.y; z -= q.z; w -= q.w; return (*this);}
@@ -616,10 +613,11 @@ struct Quaternion
     Quaternion& operator /=(float sc) {sc = 1.0f/sc; x *= sc; y *= sc; z *= sc; w *= sc; return (*this);}
     Quaternion& operator *=(const Quaternion& q)
     {
-        x = w*q.x + x*q.w + y*q.z - z*q.y;
-        y = w*q.y - x*q.z + y*q.w + z*q.x;
-        z = w*q.z + x*q.y - y*q.x + z*q.w;
-        w = w*q.w - x*q.x - y*q.y - z*q.z;
+        float x0 = x,  y0 = y, z0 = z, w0 = w;
+        x = w0*q.x + x0*q.w + y0*q.z - z0*q.y;
+        y = w0*q.y - x0*q.z + y0*q.w + z0*q.x;
+        z = w0*q.z + x0*q.y - y0*q.x + z0*q.w;
+        w = w0*q.w - x0*q.x - y0*q.y - z0*q.z;
         return (*this);
     }
     /*!
@@ -633,6 +631,7 @@ struct Quaternion
      * @param M The matrix representing a rotation
      */
     void SetRotation(const Matrix3& M);
+    const float Magnitude(void) const {return sqrtf(x*x + y*y + z*z + w*w);}
     string ToString(void) {return "(" + to_string(x) + ", " + to_string(y) + ", " + to_string(z) + ", " + to_string(w) + ")";}
     void Print(void) {cout << "Quaternion: " << ToString() << endl;}
 };
@@ -714,10 +713,10 @@ inline Matrix4 operator *(const Matrix4& A, const Matrix4& B)
                 A(3,0)*B(0,2) + A(3,1)*B(1,2) + A(3,2)*B(2,2) + A(3,3)*B(3,2),
                 A(3,0)*B(0,3) + A(3,1)*B(1,3) + A(3,2)*B(2,3) + A(3,3)*B(3,3)));}
 inline Vector4 operator *(const Matrix4& M, const Vector4& v)
-{return (Vector4(M(0,0)*v.w + M(0,1)*v.x + M(0,2)*v.y + M(0,3)*v.z,
-                M(1,0)*v.w + M(1,1)*v.x + M(1,2)*v.y + M(1,3)*v.z,
-                M(2,0)*v.w + M(2,1)*v.x + M(2,2)*v.y + M(2,3)*v.z,
-                M(3,0)*v.w + M(3,1)*v.x + M(3,2)*v.y + M(3,3)*v.z));}
+{return (Vector4(M(0,0)*v.x + M(0,1)*v.y + M(0,2)*v.z + M(0,3)*v.w,
+                M(1,0)*v.x + M(1,1)*v.y + M(1,2)*v.z + M(1,3)*v.w,
+                M(2,0)*v.x + M(2,1)*v.y + M(2,2)*v.z + M(2,3)*v.w,
+                M(3,0)*v.x + M(3,1)*v.y + M(3,2)*v.z + M(3,3)*v.w));}
 inline Matrix4 operator *(float sc, const Matrix4& M)
 {return (Matrix4(sc*M(0,0), sc*M(0,1), sc*M(0,2), sc*M(0,3),
                 sc*M(1,0), sc*M(1,1), sc*M(1,2), sc*M(1,3),
@@ -752,10 +751,18 @@ inline Vector2 operator *(const Transform3& T, const Vector2& v)
 {return (Vector2(
     T(0,0)*v.x + T(0,1)*v.y,
     T(1,0)*v.x + T(1,1)*v.y));}
+inline Vector2 operator *(const Vector2& v, Transform3& T)
+{return Vector2(
+    v.x*T(0,0) + v.y*T(1,0),
+    v.x*T(0,1) + v.y*T(1,1));}
 inline Point2 operator *(const Transform3& T, const Point2& p)
 {return (Point2(
     T(0,0)*p.x + T(0,1)*p.y,
     T(1,0)*p.x + T(1,1)*p.y));}
+inline Point2 operator *(const Point2& p, Transform3& T)
+{return Point2(
+    p.x*T(0,0) + p.y*T(1,0),
+    p.x*T(0,1) + p.y*T(1,1));}
 
 // Transform4
 
@@ -801,15 +808,24 @@ inline Point3 operator *(const Transform4& T, const Point3& p)
     T(0,0)*p.x + T(0,1)*p.y + T(0,2)*p.z,
     T(1,0)*p.x + T(1,1)*p.y + T(1,2)*p.z,
     T(2,0)*p.x + T(2,1)*p.y + T(2,2)*p.z));}
+inline Point3 operator *(const Point3& p, const Transform4& T)
+{return (Point3(
+    p.x*T(0,0) + p.y*T(1,0) + p.z*T(2,0),
+    p.x*T(0,1) + p.y*T(1,1) + p.z*T(2,1),
+    p.x*T(0,2) + p.y*T(1,2) + p.z*T(2,2)));}
 inline Plane operator *(const Plane& f, const Transform4& T)
-{
-    return (Plane(
-        f.x*T(0,0) + f.y*T(1,0) + f.z*T(2,0),
-        f.x*T(0,1) + f.y*T(1,1) + f.z*T(2,1),
-        f.x*T(0,2) + f.y*T(1,2) + f.z*T(2,2),
-        f.x*T(0,3) + f.y*T(1,3) + f.z*T(2,3) + f.w
-    ));
-}
+{return (Plane(
+    f.x*T(0,0) + f.y*T(1,0) + f.z*T(2,0),
+    f.x*T(0,1) + f.y*T(1,1) + f.z*T(2,1),
+    f.x*T(0,2) + f.y*T(1,2) + f.z*T(2,2),
+    f.x*T(0,3) + f.y*T(1,3) + f.z*T(2,3) + f.w));}
+
+inline Plane operator *(const Transform4& T, const Plane& f)
+{return Plane(
+    T(0,0)*f.x + T(0,1)*f.y + T(0,2)*f.z + T(0,3)*f.w,
+    T(1,0)*f.x + T(1,1)*f.y + T(1,2)*f.z + T(1,3)*f.w,
+    T(2,0)*f.x + T(2,1)*f.y + T(2,2)*f.z + T(2,3)*f.w,
+    T(3,3)*f.w);}
 
 // Quaternions
 
@@ -827,7 +843,6 @@ inline Quaternion operator *(const Quaternion& q1, const Quaternion& q2)
     q1.w*q2.z + q1.x*q2.y - q1.y*q2.x + q1.z*q2.w,
     q1.w*q2.w - q1.x*q2.x - q1.y*q2.y - q1.z*q2.z
 ));}
-
 // * * * * * METHODS * * * * * //
 
 // Diagonals
@@ -1034,18 +1049,18 @@ inline Matrix3 Scale(float scaleX, float scaleY, float scaleZ)
 {return (Matrix3(scaleX, 0.0f, 0.0f,
                 0.0f, scaleY, 0.0f,
                 0.0f, 0.0f, scaleZ));}
-/*! @brief Generates 4x4 matrix of scale factors for w, x, y, z axes
- *  @param[in] scaleW Scale factor for the W axis
+/*! @brief Generates 4x4 matrix of scale factors for x, y, z, w axes
  *  @param[in] scaleX Scale factor for the X axis
  *  @param[in] scaleY Scale factor for the Y axis
  *  @param[in] scaleZ Scale factor for the Z axis
+ *  @param[in] scaleW Scale factor for the W axis
  *  @return [Matrix4] Scale data structure.
  */
-inline Matrix4 Scale(float scaleW, float scaleX, float scaleY, float scaleZ)
-{return (Matrix4(scaleW, 0.0f, 0.0f, 0.0f,
-                0.0f, scaleX, 0.0f, 0.0f,
-                0.0f, 0.0f, scaleY, 0.0f,
-                0.0f, 0.0f, 0.0f, scaleZ));}
+inline Matrix4 Scale(float scaleX, float scaleY, float scaleZ, float scaleW)
+{return (Matrix4(scaleX, 0.0f, 0.0f, 0.0f,
+                0.0f, scaleY, 0.0f, 0.0f,
+                0.0f, 0.0f, scaleZ, 0.0f,
+                0.0f, 0.0f, 0.0f, scaleW));}
 
 /*!
  * @brief Generates 2x2 matrix of scale factor sc along an arbitary axis of unit length
@@ -1072,6 +1087,9 @@ Matrix4 Scale(float sc, const Vector4& a);
 //---------------------------------------------------------------------------------------------
 //                                        MEHTODS
 //---------------------------------------------------------------------------------------------
+
+// Quaternion Normalization
+inline Quaternion Normalize(const Quaternion& q) {return (q/q.Magnitude());}
 
 // Orthogonality check
 

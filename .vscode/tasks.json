@@ -4,7 +4,7 @@
 	"tasks": [
 		{
 			"type": "cppbuild",
-			"label": "C/C++: g++.exe Build MathUnitTest.exe",
+			"label": "C/C++: g++.exe Build Engine_UnitTest.exe",
 			"command": "C:/msys64/mingw64/bin/g++.exe",
 			"args": [
 				"-fdiagnostics-color=always",
@@ -16,15 +16,37 @@
 				"${workspaceFolder}\\Project\\Src\\Math\\Matrices.cpp",
 				"${workspaceFolder}\\Project\\Src\\UnitTest\\MathUnitClasses.cpp",
 				"${workspaceFolder}\\Project\\Src\\UnitTest\\MathUnitTests.cpp",
-				"${workspaceFolder}\\Project\\Src\\Main\\Main.cpp",
+				"${workspaceFolder}\\Project\\Src\\Main\\Main_UnitTest.cpp",
 				"-o",
-				"${workspaceFolder}\\Project\\Test\\MathUnitTest.exe"
+				"${workspaceFolder}\\Project\\Test\\Engine_UnitTest.exe"
 			],
 			"problemMatcher": [
 				"$gcc"
 			],
 			"group": "build",
 			"detail": "compiler: C:/msys64/mingw64/bin/g++.exe"
-		}
+		},
+		{
+			"type": "cppbuild",
+			"label": "C/C++: g++.exe Build Engine.exe",
+			"command": "C:/msys64/mingw64/bin/g++.exe",
+			"args": [
+				"-fdiagnostics-color=always",
+				"-I${workspaceFolder}\\Project\\Inc",
+				"-g",
+				"${workspaceFolder}\\Project\\Src\\Math\\Helpers.cpp",
+				"${workspaceFolder}\\Project\\Src\\Math\\Vectors.cpp",
+				"${workspaceFolder}\\Project\\Src\\Math\\Geometry.cpp",
+				"${workspaceFolder}\\Project\\Src\\Math\\Matrices.cpp",
+				"${workspaceFolder}\\Project\\Src\\Main\\Main.cpp",
+				"-o",
+				"${workspaceFolder}\\Bin\\Release\\Engine.exe"
+			],
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"detail": "compiler: C:/msys64/mingw64/bin/g++.exe"
+		},
 	]
 }

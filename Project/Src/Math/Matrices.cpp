@@ -29,9 +29,12 @@ string Matrix4::ToString(void)
 
 Matrix3 Quaternion::GetRotation(void)
 {
-    float x2 = x*x; float y2 = y*y; float z2 = z*z;
-    float xy = x*y; float xz = x*z; float yz = y*z;
-    float wx = w*x; float wy = w*y; float wz = w*z;
+    Quaternion q = (*this);
+    if (q.Magnitude() != 1.0f) q = Normalize(q);
+
+    float x2 = q.x*q.x; float y2 = q.y*q.y; float z2 = q.z*q.z;
+    float xy = q.x*q.y; float xz = q.x*q.z; float yz = q.y*q.z;
+    float wx = q.w*q.x; float wy = q.w*q.y; float wz = q.w*q.z;
 
     return (Matrix3(
         1.0f - 2.0f*(y2 + z2), 2.0f*(xy - wz), 2.0f*(xz + wy),
@@ -75,6 +78,13 @@ void Quaternion::SetRotation(const Matrix3& M)
         y = (M(2,1) + M(1,2)) * scale;
         w = (M(1,0) - M(0,1)) * scale;
     }
+    if ((*this).Magnitude() != 1.0f) {
+        float n = (*this).Magnitude();
+        x /= n;
+        y /= n;
+        z /= n;
+        w /= n;
+    };
 }
 
 // * * * * * REF * * * * * //
@@ -398,9 +408,9 @@ Matrix3 Adjugate(const Matrix3& M)
         float m21 = Det(Matrix2(M(0,0), M(0,2), M(1,0), M(1,2)));
         float m22 = Det(Matrix2(M(0,0), M(0,1), M(1,0), M(1,1)));
 
-        return Transpose(Matrix3( m00, -m01, m02,
-                                -m10, m11, -m12,
-                                m20, -m21, m22));
+        return Transpose(Matrix3( m00, 0.0f-m01, m02,
+                                0.0f-m10, m11, 0.0f-m12,
+                                m20, 0.0f-m21, m22));
     }
 }
 
@@ -428,10 +438,11 @@ Matrix4 Adjugate(const Matrix4& M)
         float m32 = Det(Matrix3(M(0,0), M(0,1), M(0,3), M(1,0), M(1,1), M(1,3), M(2,0), M(2,1), M(2,3)));
         float m33 = Det(Matrix3(M(0,0), M(0,1), M(0,2), M(1,0), M(1,1), M(1,2), M(2,0), M(2,1), M(2,2)));
 
-        return Transpose(Matrix4( m00, -m01, m02, -m03,
-                                 -m10, m11, -m12, m13,
-                                 m20, -m21, m22, -m23,
-                                 -m30, m31, -m32, m33));
+
+        return Transpose(Matrix4( m00, 0.0f-m01, m02, 0.0f-m03,
+                                 0.0f-m10, m11, 0.0f-m12, m13,
+                                 m20, 0.0f-m21, m22, 0.0f-m23,
+                                 0.0f-m30, m31, 0.0f-m32, m33));
     }
 }
 
@@ -439,64 +450,92 @@ Matrix4 Adjugate(const Matrix4& M)
 
 Matrix2 Scale(float sc, const Vector2& a)
 {
+	Vector2 v = a;
+	if (Magnitude(a) != 1.0f) v = Normalize(a);
     sc -= 1.0f;
-    float x = a.x*sc, y=a.y*sc;
-    float aXY = x*a.y;
-    return Matrix2(x*a.x + 1.0f, aXY, aXY, y*a.y + 1.0f);
+    float x = 0.0f - (v.x*sc), y=0.0f - (v.y*sc);
+    float vXY = 0.0f - (x*v.y);
+    return Matrix2((x*v.x) + 1.0f, vXY, vXY, (y*v.y) + 1.0f);
 }
 
 Matrix3 Scale(float sc, const Vector3& a)
 {
+    Vector3 v = a;
+	if (Magnitude(a) != 1.0f) v = Normalize(a);
     sc -= 1.0f;
-    float x = a.x*sc, y=a.y*sc, z = a.z*sc;
-    float aXY = x*a.y, aXZ = x*a.z, aYZ = y*a.z;
-    return Matrix3(x*a.x + 1.0f, aXY, aXZ, aXY, y*a.y + 1.0f, aYZ, aXZ, aYZ, z*a.z  + 1.0f);
+    float x = 0.0f - (v.x*sc), y=0.0f - (v.y*sc), z = 0.0f - (v.z*sc);
+    float aXY = 0.0f - (x*v.y), aXZ = 0.0f - (x*v.z), aYZ = 0.0f - (y*v.z);
+    return Matrix3((x*v.x) + 1.0f, aXY, aXZ, aXY, (y*v.y) + 1.0f, aYZ, aXZ, aYZ, (z*v.z)  + 1.0f);
 }
 
 Matrix4 Scale(float sc, const Vector4& a)
 {
+    Vector4 v = a;
+	if (Magnitude(a) != 1.0f) v = Normalize(a);
     sc -= 1.0f;
-    float x = a.x*sc, y=a.y*sc, z = a.z*sc, w = a.w*sc;
-    float aXY = x*a.y, aXZ = x*a.z, aXW = x*a.w, aYZ = y*a.z, aYW = y*a.w, aZW = z*a.w;
-    return Matrix4(x*a.x + 1.0f, aXY, aXZ, aXW, aXY, y*a.y + 1.0f, aYZ, aYW, aXZ, aYZ, z*a.z  + 1.0f, aZW, aXW, aYW, aZW, w*a.w + 1.0f);
+    float x = 0.0f - (v.x*sc), y=0.0f - (v.y*sc), z = 0.0f - (v.z*sc), w = 0.0f - (v.w*sc);
+    float aXY = 0.0f - (x*v.y), aXZ = 0.0f - (x*v.z), aXW = 0.0f - (x*v.w), aYZ = 0.0f - (y*v.z), aYW = 0.0f - (y*v.w), aZW = 0.0f - (z*v.w);
+    return Matrix4((x*v.x) + 1.0f, aXY, aXZ, aXW, aXY, (y*v.y) + 1.0f, aYZ, aYW, aXZ, aYZ, (z*v.z)  + 1.0f, aZW, aXW, aYW, aZW, (w*v.w) + 1.0f);
 }
 
 // * * * * * SKEW MATRICES * * * * * //
 
 Matrix2 Skew(float angle, const Vector2& u1, const Vector2& u2)
 {
-    angle = tan(angle);
-    float x = angle * u1.x;
-    float y = angle * u1.y;
 
-    return (Matrix2(x*u2.x + 1.0f, x*u2.y,
-                    y*u2.x, y*u2.y + 1.0f));
+    Vector2 v1=u1, v2=u2;
+    if (Magnitude(u1) != 1.0f) v1 = Normalize(u1);
+    if (Magnitude(u2) != 1.0f) v2 = Normalize(u2);
+
+    try {if (fabs(u1*u2) > FLT_MIN) throw NonOrthogonalE();}
+    catch (NonOrthogonalE& e){cout << "Exception occurred!\n" << e.what();}
+
+    angle = tan(angle);
+    float x = 0.0f - angle * v1.x;
+    float y = 0.0f - angle * v1.y;
+
+    return (Matrix2(x*v2.x + 1.0f, x*v2.y,
+                    y*v2.x, y*v2.y + 1.0f));
 }
 
 Matrix3 Skew(float angle, const Vector3& u1, const Vector3& u2)
 {
-    angle = tan(angle);
-    float x = angle * u1.x;
-    float y = angle * u1.y;
-    float z = angle * u1.z;
+    Vector3 v1=u1, v2=u2;
+    if (Magnitude(u1) != 1.0f) v1 = Normalize(u1);
+    if (Magnitude(u2) != 1.0f) v2 = Normalize(u2);
 
-    return (Matrix3(x*u2.x + 1.0f, x*u2.y, x*u2.z,
-                    y*u2.x, y*u2.y + 1.0f, y*u2.z,
-                    z*u2.x, z*u2.y, z*u2.z + 1.0f));
+    try {if (fabs(u1*u2) > FLT_MIN) throw NonOrthogonalE();}
+    catch (NonOrthogonalE& e){cout << "Exception occurred!\n" << e.what();}
+
+    angle = tan(angle);
+    float x = angle * v1.x;
+    float y = angle * v1.y;
+    float z = angle * v1.z;
+
+    return (Matrix3(x*v2.x + 1.0f, x*v2.y, x*v2.z,
+                    y*v2.x, y*v2.y + 1.0f, y*v2.z,
+                    z*v2.x, z*v2.y, z*v2.z + 1.0f));
 }
 
 Matrix4 Skew(float angle, const Vector4& u1, const Vector4& u2)
 {
-    angle = tan(angle);
-    float w = angle * u1.w;
-    float x = angle * u1.x;
-    float y = angle * u1.y;
-    float z = angle * u1.z;
+    Vector4 v1=u1, v2=u2;
+    if (Magnitude(u1) != 1.0f) v1 = Normalize(u1);
+    if (Magnitude(u2) != 1.0f) v2 = Normalize(u2);
 
-    return (Matrix4(w*u2.w + 1.0f, w*u2.x, w*u2.y, w*u2.z,
-                    x*u2.w, x*u2.x + 1.0f, x*u2.y, x*u2.z,
-                    y*u2.w, y*u2.x, y*u2.y + 1.0f, y*u2.z,
-                    z*u2.w, z*u2.x, z*u2.y, z*u2.z + 1.0f));
+    try {if (fabs(u1*u2) > FLT_MIN) throw NonOrthogonalE();}
+    catch (NonOrthogonalE& e){cout << "Exception occurred!\n" << e.what();}
+
+    angle = tan(angle);
+    float w = angle * v1.w;
+    float x = angle * v1.x;
+    float y = angle * v1.y;
+    float z = angle * v1.z;
+
+    return (Matrix4(w*v2.w + 1.0f, w*v2.x, w*v2.y, w*v2.z,
+                    x*v2.w, x*v2.x + 1.0f, x*v2.y, x*v2.z,
+                    y*v2.w, y*v2.x, y*v2.y + 1.0f, y*v2.z,
+                    z*v2.w, z*v2.x, z*v2.y, z*v2.z + 1.0f));
 }
 
 // * * * * * ROTATIONS * * * * * //
@@ -505,7 +544,7 @@ Matrix2 Rotate(float angle)
 {
 	float cs = cos(angle);
 	float sn = sin(angle);
-	
+
 	return Matrix2(cs, -sn, sn, cs);
 }
 

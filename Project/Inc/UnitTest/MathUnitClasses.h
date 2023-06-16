@@ -2021,8 +2021,8 @@ public:
         counter.SetCount(Adjugate(M) == Matrix2(4.0f, -2.0f, -3.0f, 1.0f));
         IS_EQUAL(Scale(2.0f, 3.0f), Matrix2(2.0f, 0.0f, 0.0f, 3.0f));
         counter.SetCount(Scale(2.0f, 3.0f) == Matrix2(2.0f, 0.0f, 0.0f, 3.0f));
-        IS_EQUAL(Scale(3.0f, Vector2(1.0f, 2.0f)), Matrix2(3.0f, 4.0f, 4.0f, 9.0f));
-        counter.SetCount(Scale(3.0f, Vector2(1.0f, 2.0f)) == Matrix2(3.0f, 4.0, 4.0f, 9.0f));
+        IS_EQUAL(Scale(3.0f, Vector2(1.0f, 2.0f)), Matrix2(0.6f, 0.8f, 0.8f, -0.6f));
+        counter.SetCount(Scale(3.0f, Vector2(1.0f, 2.0f)) == Matrix2(0.6f, 0.8f, 0.8f, -0.6f));
 
         M = ((1.0f/sqrtf(2.0f)) * Matrix2(1.0f, 1.0f, 1.0f, -1.0f));
         IS_TRUE(IsOrthogonal(M));
@@ -2030,7 +2030,7 @@ public:
 
         Vector2 u(2.0f, 3.0f), v(3.0f, -2.0f);
         Matrix2 S = Skew(0.5235987756f, u, v);
-        Matrix2 E(4.464101615137754587054f, -2.309401076758503058036f, 5.196152422706631880581f, -2.464101615137754587054f);
+        Matrix2 E(0.733531f, 0.177646f, -0.399704f, 1.266469f);
         IS_EQUAL(S, E);
         counter.SetCount(S == E);
         S = SkewDegrees(30.0f, u, v);
@@ -2266,20 +2266,20 @@ public:
         counter.SetCount(Cofactor(A) == Transpose(Matrix3(-3.0f, 6.0f, -3.0f, 6.0f, -12.0f, 6.0f, -3.0f, 6.0f, -3.0f)));
         IS_EQUAL(Scale(3.0f, 4.0f, 2.0f), Matrix3(3.0f, 0.0f, 0.0f, 0.0f, 4.0f, 0.0f, 0.0f, 0.0f, 2.0f));
         counter.SetCount(Scale(3.0f, 4.0f, 2.0f) == Matrix3(3.0f, 0.0f, 0.0f, 0.0f, 4.0f, 0.0f, 0.0f, 0.0f, 2.0f));
-        IS_EQUAL(Scale(-3.0f, Vector3(-1.5f, 2.0f, 3.5f)), Matrix3(-8.0f, 12.0f, 21.0f, 12.0f, -15.0f, -28.0f, 21.0f, -28.0f, -48.0f));
-        counter.SetCount(Scale(-3.0f, Vector3(-1.5f, 2.0f, 3.5f)) == Matrix3(-8.0f, 12.0f, 21.0f, 12.0f, -15.0f, -28.0f, 21.0f, -28.0f, -48.0f));
+
+        R = Matrix3(1.486486f, 0.648649f, 1.135135f, 0.648649f, 1.864865f, -1.513513f, 1.135135f, -1.513513f, 3.648649f);
+        IS_EQUAL(Scale(-3.0f, Vector3(-1.5f, 2.0f, 3.5f)), R);
+        counter.SetCount(Scale(-3.0f, Vector3(-1.5f, 2.0f, 3.5f)) == R);
         IS_TRUE(IsOrthogonal((1.0f/3.0f) * Matrix3(1.0f, 2.0f, 2.0f, 2.0f, 1.0f, -2.0f, -2.0f, 2.0f, -1.0f)));
         counter.SetCount(IsOrthogonal((1.0f/3.0f) * Matrix3(1.0f, 2.0f, 2.0f, 2.0f, 1.0f, -2.0f, -2.0f, 2.0f, -1.0f)));
         IS_FALSE(IsOrthogonal(A));
         counter.SetCount(!IsOrthogonal(A));
 
-        R = Matrix3( 5.284444020f, 2.85629601348f, 5.712592026968f,
-                        -8.568888040f, -4.71259202696f, -11.4251840539f,
-                        -4.284444020f, -2.85629601348f, -4.71259202696f);
-        IS_EQUAL(Skew(0.95993108859688f, Vector3(1.0f, -2.0f, -1.0f), Vector3(3.0f, 2.0f, 4.0f) ), R);
-        counter.SetCount(Skew(0.95993108859688f, Vector3(1.0f, -2.0f, -1.0f), Vector3(3.0f, 2.0f, 4.0f) ) == R);
-        IS_EQUAL(SkewDegrees(55.0f, Vector3(1.0f, -2.0f, -1.0), Vector3(3.0f, 2.0f, 4.0f)), R);
-        counter.SetCount(SkewDegrees(55.0f, Vector3(1.0f, -2.0f, -1.0), Vector3(3.0f, 2.0f, 4.0f)) == R);
+        R = Matrix3(1.281153f, -0.843459f, -0.843459f, -0.062478f, 1.187435f, 0.187435f, 0.156196f, -0.468588f, 0.531412f);
+        IS_EQUAL(Skew(0.95993108859688f, Vector3(-9.0f, 2.0f, -5.0f), Vector3(-1.0f, 3.0f, 3.0f) ), R);
+        counter.SetCount(Skew(0.95993108859688f, Vector3(-9.0f, 2.0f, -5.0f), Vector3(-1.0f, 3.0f, 3.0f)) == R);
+        IS_EQUAL(SkewDegrees(55.0f, Vector3(-9.0f, 2.0f, -5.0f), Vector3(-1.0f, 3.0f, 3.0f)), R);
+        counter.SetCount(SkewDegrees(55.0f, Vector3(-9.0f, 2.0f, -5.0f), Vector3(-1.0f, 3.0f, 3.0f)) == R);
 
         float cs = cos(PI/3.0f);
         float sn = sin(PI/3.0f);
@@ -2346,11 +2346,296 @@ struct TestMatrix4
 private:
     Counter counter;
 public:
-    void Initialize(void){}
-    void ValueChange(void){}
-    void MemoryPlacement(void){}
-    void ClassOperators(void){}
-    void Methods(void){}
+    void Initialize(void)
+    {
+        Print("Testing Matrix4 intialization...");
+        Matrix4 M(  1.0f, 2.0f, 3.0f, 4.0f,
+                    5.0f, 6.0f, 7.0f, 8.0f,
+                    9.0f, 10.0f, 11.0f, 12.0f,
+                    13.0f, 14.0f, 15.0f, 16.0f);
+        IS_EQUAL(M.Row(0), Vector4(1.0f, 2.0f, 3.0f, 4.0f));
+        counter.SetCount(M.Row(0) == Vector4(1.0f, 2.0f, 3.0f, 4.0f));
+        IS_EQUAL(M.Row(1), Vector4(5.0f, 6.0f, 7.0f, 8.0f));
+        counter.SetCount(M.Row(1) == Vector4(5.0f, 6.0f, 7.0f, 8.0f));
+        IS_EQUAL(M.Row(2), Vector4(9.0f, 10.0f, 11.0f, 12.0f));
+        counter.SetCount(M.Row(2) == Vector4(9.0f, 10.0f, 11.0f, 12.0f));
+        IS_EQUAL(M.Row(3), Vector4(13.0f, 14.0f, 15.0f, 16.0f));
+        counter.SetCount(M.Row(3) == Vector4(13.0f, 14.0f, 15.0f, 16.0f));
+
+        M = Matrix4(Vector4(-2.0f, 4.0f, -6.0f, 8.0f),
+                    Vector4(3.0f, -5.0f, 7.0f, -9.0f),
+                    Vector4(-4.0f, 5.0f, 8.0f, -10.0f),
+                    Vector4(1.0f, 4.0f, -5.0f, -8.0f));
+
+        IS_EQUAL(M.Col(0), Vector4(-2.0f, 4.0f, -6.0f, 8.0f));
+        counter.SetCount(M.Col(0) == Vector4(-2.0f, 4.0f, -6.0f, 8.0f));
+        IS_EQUAL(M.Col(1), Vector4(3.0f, -5.0f, 7.0f, -9.0f));
+        counter.SetCount(M.Col(1) == Vector4(3.0f, -5.0f, 7.0f, -9.0f));
+        IS_EQUAL(M.Col(2), Vector4(-4.0f, 5.0f, 8.0f, -10.0f));
+        counter.SetCount(M.Col(2) == Vector4(-4.0f, 5.0f, 8.0f, -10.0f));
+        IS_EQUAL(M.Col(3), Vector4(1.0f, 4.0f, -5.0f, -8.0f));
+        counter.SetCount(M.Col(3) == Vector4(1.0f, 4.0f, -5.0f, -8.0f));
+
+        M = M.Identity();
+        IS_EQUAL(M.Row(0), Vector4(1.0f, 0.0f, 0.0f, 0.0f));
+        counter.SetCount(M.Row(0) == Vector4(1.0f, 0.0f, 0.0f, 0.0f));
+        IS_EQUAL(M.Row(1), Vector4(0.0f, 1.0f, 0.0f, 0.0f));
+        counter.SetCount(M.Row(1) == Vector4(0.0f, 1.0f, 0.0f, 0.0f));
+        IS_EQUAL(M.Row(2), Vector4(0.0f, 0.0f, 1.0f, 0.0f));
+        counter.SetCount(M.Row(2) == Vector4(0.0f, 0.0f, 1.0f, 0.0f));
+        IS_EQUAL(M.Row(3), Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+        counter.SetCount(M.Row(3) == Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+
+        M = M.Zero();
+        IS_EQUAL(M.Row(0), Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+        counter.SetCount(M.Row(0) == Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+        IS_EQUAL(M.Row(1), Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+        counter.SetCount(M.Row(1) == Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+        IS_EQUAL(M.Row(2), Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+        counter.SetCount(M.Row(2) == Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+        IS_EQUAL(M.Row(3), Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+        counter.SetCount(M.Row(3) == Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+
+        Print("Testing Matrix4 methods complete!");
+        Print("-Total Tests: " + to_string(counter.GetTotal()));
+        Print("-Tests Passed: " + to_string(counter.GetCountPass()));
+        Print("-Tests Failed: " + to_string(counter.GetCountFail()) + "\n");
+        counter.Reset();
+    }
+    void ValueChange(void)
+    {
+        Print("Testing Matrix4 value change...");
+        Matrix4 M(  1.0f, 2.0f, 3.0f, 4.0f,
+                    5.0f, 6.0f, 7.0f, 8.0f,
+                    9.0f, 10.0f, 11.0f, 12.0f,
+                    13.0f, 14.0f, 15.0f, 16.0f);
+
+        IS_EQUAL(M.Col(0), Vector4(1.0f, 5.0f, 9.0f, 13.0f));
+        counter.SetCount(M.Col(0) == Vector4(1.0f, 5.0f, 9.0f, 13.0f));
+        IS_EQUAL(M.Col(1), Vector4(2.0f, 6.0f, 10.0f, 14.0f));
+        counter.SetCount(M.Col(1) == Vector4(2.0f, 6.0f, 10.0f, 14.0f));
+        IS_EQUAL(M.Col(2), Vector4(3.0f, 7.0f, 11.0f, 15.0f));
+        counter.SetCount(M.Col(2) == Vector4(3.0f, 7.0f, 11.0f, 15.0f));
+        IS_EQUAL(M.Col(3), Vector4(4.0f, 8.0f, 12.0f, 16.0f));
+        counter.SetCount(M.Col(3) == Vector4(4.0f, 8.0f, 12.0f, 16.0f));
+
+        Matrix4 A(Vector4(2.0f, 6.0f, 4.0f, 8.0f),
+                    Vector4(-4.0f, -1.0f, -3.0f, 5.0f),
+                    Vector4(3.0f,  -6.0f, -1.0f, 4.0f),
+                    Vector4(-5.0f, 4.0f, -3.0f, 2.0f));
+
+        M = A;
+        IS_EQUAL(M.Row(0), Vector4(2.0f, -4.0f, 3.0f, -5.0f));
+        counter.SetCount(M.Row(0) == Vector4(2.0f, -4.0f, 3.0f, -5.0f));
+        IS_EQUAL(M.Row(1), Vector4(6.0f, -1.0f, -6.0f, 4.0f));
+        counter.SetCount(M.Row(1) == Vector4(6.0f, -1.0f, -6.0f, 4.0f));
+        IS_EQUAL(M.Row(2), Vector4(4.0f, -3.0f, -1.0f, -3.0f));
+        counter.SetCount(M.Row(2) == Vector4(4.0f, -3.0f, -1.0f, -3.0f));
+        IS_EQUAL(M.Row(3), Vector4(8.0f, 5.0f, 4.0f, 2.0f));
+        counter.SetCount(M.Row(3) == Vector4(8.0f, 5.0f, 4.0f, 2.0f));
+
+        Print("Testing Matrix4 methods complete!");
+        Print("-Total Tests: " + to_string(counter.GetTotal()));
+        Print("-Tests Passed: " + to_string(counter.GetCountPass()));
+        Print("-Tests Failed: " + to_string(counter.GetCountFail()) + "\n");
+        counter.Reset();
+    }
+    void MemoryPlacement(void)
+    {
+        Print("Testing Matrix4 memory placement...");
+        Matrix4 M(  1.0f, 2.0f, 3.0f, 4.0f,
+                    5.0f, 6.0f, 7.0f, 8.0f,
+                    9.0f, 10.0f, 11.0f, 12.0f,
+                    13.0f, 14.0f, 15.0f, 16.0f);
+        Matrix4 A = M;
+        Matrix4 *x = &M, *y = &A;
+
+        IS_NOTEQUAL(x, y);
+        counter.SetCount(x != y);
+        IS_EQUAL(*x, *y);
+        counter.SetCount(*x == *y);
+
+        y = &M;
+        IS_EQUAL(x, y);
+        counter.SetCount(x == y);
+        Print("Testing Matrix4 memory placement complete!");
+        Print("-Total Tests: " + to_string(counter.GetTotal()));
+        Print("-Tests Passed: " + to_string(counter.GetCountPass()));
+        Print("-Tests Failed: " + to_string(counter.GetCountFail()) + "\n");
+        counter.Reset();
+    }
+    void ClassOperators(void)
+    {
+        Print("Testing Matrix4 class operators...");
+        Matrix4 M(  1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f,
+                    9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f);
+        Matrix4 A(  -2.0f, 4.0f, -5.0f, -3.0f, 8.0f, 7.0f, -3.0f, 2.0f,
+                    -1.0f, 4.0f, -2.0f, 10.0f, 9.0f, -1.0f, 2.0f, 3.0f);
+        Matrix4 copyM = M;
+
+        M += A;
+        IS_EQUAL(M, Matrix4(-1.0f, 6.0f, -2.0f, 1.0f, 13.0f, 13.0f, 4.0f, 10.0f,
+                            8.0f, 14.0f, 9.0f, 22.0f, 22.0f, 13.0f, 17.0f, 19.0f));
+        counter.SetCount(M ==
+                        Matrix4(-1.0f, 6.0f, -2.0f, 1.0f, 13.0f, 13.0f, 4.0f, 10.0f,
+                                8.0f, 14.0f, 9.0f, 22.0f, 22.0f, 13.0f, 17.0f, 19.0f));
+        M -= copyM;
+        IS_EQUAL(M, A);
+        counter.SetCount(M == A);
+        M = copyM;
+
+        M*=2.0f;
+        IS_EQUAL(M, Matrix4(2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f, 14.0f, 16.0f,
+                            18.0f, 20.0f, 22.0f, 24.0f, 26.0f, 28.0f, 30.0f, 32.0f));
+        counter.SetCount(M ==
+                        Matrix4(2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f, 14.0f, 16.0f,
+                                18.0f, 20.0f, 22.0f, 24.0f, 26.0f, 28.0f, 30.0f, 32.0f));
+        M/=2.0f;
+        IS_EQUAL(M, copyM);
+        counter.SetCount(M == copyM);
+
+
+        Print("Testing Matrix4 class operators complete!");
+        Print("-Total Tests: " + to_string(counter.GetTotal()));
+        Print("-Tests Passed: " + to_string(counter.GetCountPass()));
+        Print("-Tests Failed: " + to_string(counter.GetCountFail()) + "\n");
+        counter.Reset();
+    }
+    void Methods(void)
+    {
+        Print("Testing Matrix4 methods...");
+        Matrix4 M(  1.0f, 2.0f, 3.0, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f,
+                    9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f);
+        Matrix4 A(  -2.0f, 4.0f, -5.0f, -3.0f, 8.0f, 7.0f, -3.0f, 2.0f,
+                    -1.0f, 4.0f, -2.0f, 10.0f, 9.0f, -1.0f, 2.0f, 3.0f);
+        Matrix4 R;
+        Vector4 v(8.0f, -4.0f, 3.0f, 5.0f);
+        float c = 1.0f, copyC;
+
+        IS_EQUAL(M+A, Matrix4(-1.0f, 6.0f, -2.0f, 1.0f, 13.0f, 13.0f, 4.0f, 10.0f,
+                            8.0f, 14.0f, 9.0f, 22.0f, 22.0f, 13.0f, 17.0f, 19.0f));
+        counter.SetCount(M+A ==
+                    Matrix4(-1.0f, 6.0f, -2.0f, 1.0f, 13.0f, 13.0f, 4.0f, 10.0f,
+                            8.0f, 14.0f, 9.0f, 22.0, 22.0f, 13.0f, 17.0f, 19.0f));
+        IS_EQUAL(M-A, Matrix4(  3.0f, -2.0f, 8.0f, 7.0f, -3.0f, -1.0f, 10.0f, 6.0f,
+                            10.0f, 6.0f, 13.0f, 2.0f, 4.0f, 15.0f, 13.0f, 13.0f));
+        counter.SetCount(M-A ==
+                    Matrix4(  3.0f, -2.0f, 8.0f, 7.0f, -3.0f, -1.0f, 10.0f, 6.0f,
+                                10.0f, 6.0f, 13.0f, 2.0f, 4.0f, 15.0f, 13.0f, 13.0f));
+        IS_EQUAL(M*A, Matrix4(  47.0f, 26.0f, -9.0f, 43.0f, 103.0f, 82.0f, -41.0f, 91.0f,
+                            159.0f, 138.0f, -73.0f, 139.0f, 215.0f, 194.0f, -105.0f, 187.0f));
+        counter.SetCount(M*A ==
+                    Matrix4(  47.0f, 26.0f, -9.0f, 43.0f, 103.0f, 82.0f, -41.0f, 91.0f,
+                            159.0f, 138.0f, -73.0f, 139.0f, 215.0f, 194.0f, -105.0f, 187.0f));
+        IS_EQUAL(2.0f*M, Matrix4(   2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f, 14.0f, 16.0f,
+                                18.0f, 20.0f, 22.0f, 24.0f, 26.0f, 28.0f, 30.0f, 32.0f));
+        counter.SetCount(2.0f*M ==
+                    Matrix4(   2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f, 14.0f, 16.0f,
+                            18.0f, 20.0f, 22.0f, 24.0f, 26.0f, 28.0f, 30.0f, 32.0f));
+        IS_EQUAL(M*2.0f, Matrix4(   2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f, 14.0f, 16.0f,
+                                18.0f, 20.0f, 22.0f, 24.0f, 26.0f, 28.0f, 30.0f, 32.0f));
+        counter.SetCount(M*2.0f ==
+                    Matrix4(   2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f, 14.0f, 16.0f,
+                            18.0f, 20.0f, 22.0f, 24.0f, 26.0f, 28.0f, 30.0f, 32.0f));
+        M *= 2.0f;
+        IS_EQUAL(M/2.0f, Matrix4(  1.0f, 2.0f, 3.0, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f,
+                    9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f));
+        counter.SetCount(M/2.0f ==
+                    Matrix4(  1.0f, 2.0f, 3.0, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f,
+                            9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f));
+        M /= 2.0f;
+
+        IS_EQUAL(Diagonal(M), Vector4(1.0f, 6.0f, 11.0f, 16.0f));
+        counter.SetCount(Diagonal(M) == Vector4(1.0f, 6.0f, 11.0f, 16.0f));
+        IS_EQUAL(Transpose(M), Matrix4(Vector4(1.0f, 2.0f, 3.0f, 4.0f),
+                                        Vector4(5.0f, 6.0f, 7.0f, 8.0f),
+                                        Vector4(9.0f, 10.0f, 11.0f, 12.0f),
+                                        Vector4(13.0f, 14.0f, 15.0f, 16.0f)));
+
+        counter.SetCount(Transpose(M) == Matrix4(Vector4(1.0f, 2.0f, 3.0f, 4.0f),
+                                                Vector4(5.0f, 6.0f, 7.0f, 8.0),
+                                                Vector4(9.0f, 10.0f, 11.0f, 12.0f),
+                                                Vector4(13.0f, 14.0f, 15.0f, 16.0f)));
+        R = REF(M, &c);
+        IS_EQUAL(R, Matrix4(1.0f, 2.0f, 3.0f, 4.0f, 0.0f, 1.0f, 2.0f, 3.0f,
+                                    0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f));
+        counter.SetCount(R == Matrix4(1.0f, 2.0f, 3.0f, 4.0f, 0.0f, 1.0f, 2.0f, 3.0f,
+                                    0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f));
+        IS_EQUAL(c, -4.0f);
+        counter.SetCount(c == -4.0f);
+        IS_CLOSE(Det(A), -1633.999878f);
+        counter.SetCount(Det(A) == -1633.999878f);
+        IS_EQUAL(Det(M), 0.0f);
+        counter.SetCount(Det(M) == 0.0f);
+        IS_EQUAL(Trace(M), 34.0f);
+        counter.SetCount(Trace(M) == 34.0f);
+
+        R = Inverse(A);
+        Matrix4 expectedR = (1.0f/1634.0f)*Matrix4(104.0f, -12.0f, -30.0f, 212.0f,
+                                                    -455.0f, 461.0f, -73.0f, -519.0f,
+                                                    -757.0f, 433.0f, -143.0f, -569.0f,
+                                                    41.0f, -99.0f, 161.0f, 115.0f);
+        IS_EQUAL(R, expectedR);
+        counter.SetCount(R == expectedR);
+        IS_EQUAL(Adjugate(M), M.Zero());
+        counter.SetCount(Adjugate(M) == M.Zero());
+        IS_EQUAL(Cofactor(M), M.Zero());
+        counter.SetCount(Cofactor(M) == M.Zero());
+
+        R = Adjugate(A);
+        expectedR = (-1.0f)*Matrix4(104.0f, -12.000004f, -29.999998f, 211.99997f,
+                                    -455.0f, 460.99994f, -72.999985f, -518.99994f,
+                                    -757.0f, 432.99997f, -142.99999f, -568.99994f,
+                                    41.0f, -99.0f, 160.99997f, 115.000015f);
+
+        IS_EQUAL(R, expectedR);
+        counter.SetCount(R == expectedR);
+        R = Cofactor(A);
+        IS_EQUAL(R, Transpose(expectedR));
+        counter.SetCount(R == Transpose(expectedR));
+        IS_EQUAL(Scale(3.0f, 2.0f, -3.0f, -2.0f), Matrix4(3.0f, 0.0f, 0.0f, 0.0f,
+                                                            0.0f, 2.0f, 0.0f, 0.0f,
+                                                            0.0f, 0.0f, -3.0f, 0.0f,
+                                                            0.0f, 0.0f, 0.0f, -2.0f));
+        counter.SetCount(Scale(3.0f, 2.0f, -3.0f, -2.0f) == Matrix4(3.0f, 0.0f, 0.0f, 0.0f,
+                                                            0.0f, 2.0f, 0.0f, 0.0f,
+                                                            0.0f, 0.0f, -3.0f, 0.0f,
+                                                            0.0f, 0.0f, 0.0f, -2.0f));
+        R = Scale(3.0f, Vector4(-9.0f, 2.0f, -5.0f, 4.0f));
+        expectedR = Matrix4(-0.285714f, -0.285714f, 0.714286f, -0.571429f,
+                            -0.285714f, 0.936508f, -0.158730f, 0.126984f,
+                            0.714286f, -0.158730f, 0.603175f, -0.317460f,
+                            -0.571429f, 0.126984, -0.317460f, 0.746032f);
+        IS_EQUAL(R, expectedR);
+        counter.SetCount(R == expectedR);
+        R = Skew(3.0f, Vector4(-1.0f, 2.0f, -5.0f, 5.0f), Vector4(-9.0f, 3.0f, -2.0f, -5.0f));
+        expectedR = Matrix4(1.04405f, 0.079289f, -0.026430f, 0.017620f,
+                            -0.008810f, 0.984142f, 0.005286f, -0.003524f,
+                            0.017620f, 0.031716f, 0.989428f, 0.007048f,
+                            -0.044050f, -0.079289f, 0.026430f, 0.982380f);
+
+        R = Reflection(Vector4(3.0f, -2.0f, 4.5f, -1.5f));
+        expectedR = Matrix4(0.492958f, 0.338028f, -0.760563f, 0.253521f,
+                            0.338028f, 0.774648f, 0.507042f, -0.169014f,
+                            -0.760563f, 0.507042f, -0.140845f, 0.380282f,
+                            0.253521f, -0.169014f, 0.380282f, 0.873239f);
+        IS_EQUAL(R, expectedR);
+        counter.SetCount(R == expectedR);
+
+        R = Involution(Vector4(3.0f, -2.0f, 4.5f, -1.5f));
+        IS_EQUAL(R, -1.0f*expectedR);
+        counter.SetCount(R == -1.0f*expectedR);
+
+
+
+        Print("Testing Matrix4 methods complete!");
+        Print("-Total Tests: " + to_string(counter.GetTotal()));
+        Print("-Tests Passed: " + to_string(counter.GetCountPass()));
+        Print("-Tests Failed: " + to_string(counter.GetCountFail()) + "\n");
+        counter.Reset();
+    }
+
+
     void AllTests(void)
     {
         cout << "* * * * * * * * * * * * * * * * * * * * * *" << endl;
@@ -2375,11 +2660,242 @@ public:
 struct TestTransform3
 {
     Counter counter;
-    void Initialize(void){}
-    void ValueChange(void){}
-    void MemoryPlacement(void){}
-    void ClassOperators(void){}
-    void Methods(void){}
+    void Initialize(void)
+    {
+        Print("Testing Transform3 initalization...");
+
+        Transform3 T(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f);
+        IS_EQUAL(T.Row(0), Vector3(1.0f, 2.0f, 3.0f));
+        counter.SetCount(T.Row(0) == Vector3(1.0f, 2.0f, 3.0f));
+        IS_EQUAL(T.Row(1), Vector3(4.0f, 5.0f, 6.0f));
+        counter.SetCount(T.Row(1) == Vector3(4.0f, 5.0f, 6.0f));
+        IS_EQUAL(T.Row(2), Vector3(0.0f, 0.0f, 1.0f));
+        counter.SetCount(T.Row(2) == Vector3(0.0f, 0.0f, 1.0f));
+        IS_EQUAL(T.Col(0), Vector2(1.0f, 4.0f));
+        counter.SetCount(T.Col(0) == Vector2(1.0f, 4.0f));
+        IS_EQUAL(T.Col(1), Vector2(2.0f, 5.0f));
+        counter.SetCount(T.Col(1) == Vector2(2.0f, 5.0f));
+        IS_EQUAL(T.GetTranslation(), Point2(3.0f, 6.0f));
+        counter.SetCount(T.GetTranslation() == Point2(3.0f, 6.0f));
+
+        Transform3 A(Vector2(-3.0f, 2.0f), Vector2(-2.0f, 1.5f), Point2(4.0f, 5.0f));
+        IS_EQUAL(A.Row(0), Vector3(-3.0f, -2.0f, 4.0f));
+        counter.SetCount(A.Row(0) == Vector3(-3.0f, -2.0f, 4.0f));
+        IS_EQUAL(A.Row(1), Vector3(2.0f, 1.5f, 5.0f));
+        counter.SetCount(A.Row(1) == Vector3(2.0f, 1.5f, 5.0f));
+        IS_EQUAL(T.Row(2), Vector3(0.0f, 0.0f, 1.0f));
+        counter.SetCount(T.Row(2) == Vector3(0.0f, 0.0f, 1.0f));
+        IS_EQUAL(A.Col(0), Vector2(-3.0f, 2.0f));
+        counter.SetCount(A.Col(0) == Vector2(-3.0f, 2.0f));
+        IS_EQUAL(A.Col(1), Vector2(-2.0f, 1.5f));
+        counter.SetCount(A.Col(1) == Vector2(-2.0f, 1.5f));
+        IS_EQUAL(A.GetTranslation(), Point2(4.0f, 5.0f));
+        counter.SetCount(A.GetTranslation() == Point2(4.0f, 5.0f));
+
+        Transform3 B(Matrix2(2.0f, -3.0f, 5.0f, -4.0f), Point2(-1.5f, 2.5f));
+        IS_EQUAL(B.Row(0), Vector3(2.0f, -3.0f, -1.5f));
+        counter.SetCount(B.Row(0) == Vector3(2.0f, -3.0f, -1.5f));
+        IS_EQUAL(B.Row(1), Vector3(5.0f, -4.0f, 2.5f));
+        counter.SetCount(B.Row(1) == Vector3(5.0f, -4.0f, 2.5f));
+        IS_EQUAL(T.Row(2), Vector3(0.0f, 0.0f, 1.0f));
+        counter.SetCount(T.Row(2) == Vector3(0.0f, 0.0f, 1.0f));
+        IS_EQUAL(B.Col(0), Vector2(2.0f, 5.0f));
+        counter.SetCount(B.Col(0) == Vector2(2.0f, 5.0f));
+        IS_EQUAL(B.Col(1), Vector2(-3.0f, -4.0f));
+        counter.SetCount(B.Col(1) == Vector2(-3.0f, -4.0f));
+        IS_EQUAL(B.GetTranslation(), Point2(-1.5f, 2.5f));
+        counter.SetCount(B.GetTranslation() == Point2(-1.5f, 2.5f));
+
+        Print("Testing Transform3 initalization complete!");
+        Print("-Total Tests: " + to_string(counter.GetTotal()));
+        Print("-Tests Passed: " + to_string(counter.GetCountPass()));
+        Print("-Tests Failed: " + to_string(counter.GetCountFail()) + "\n");
+        counter.Reset();
+    }
+    void ValueChange(void)
+    {
+        Print("Testing Transform3 value change...");
+
+        Transform3 T(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f);
+        Transform3 B(2.0f, -3.5f, 4.0f, -2.0f, -1.0f, 2.5f);
+
+        IS_EQUAL(T.Row(0), Vector3(1.0f, 2.0f, 3.0f));
+        counter.SetCount(T.Row(0) == Vector3(1.0f, 2.0f, 3.0f));
+        IS_EQUAL(T.Row(1), Vector3(4.0f, 5.0f, 6.0f));
+        counter.SetCount(T.Row(1) == Vector3(4.0f, 5.0f, 6.0f));
+        IS_EQUAL(T.Row(2), Vector3(0.0f, 0.0f, 1.0f));
+        counter.SetCount(T.Row(2) == Vector3(0.0f, 0.0f, 1.0f));
+        IS_EQUAL(T.Col(0), Vector2(1.0f, 4.0f));
+        counter.SetCount(T.Col(0) == Vector2(1.0f, 4.0f));
+        IS_EQUAL(T.Col(1), Vector2(2.0f, 5.0f));
+        counter.SetCount(T.Col(1) == Vector2(2.0f, 5.0f));
+        IS_EQUAL(T.GetTranslation(), Point2(3.0f, 6.0f));
+        counter.SetCount(T.GetTranslation() == Point2(3.0f, 6.0f));
+
+        T = B;
+        IS_EQUAL(T.Row(0), Vector3(2.0f, -3.5f, 4.0f));
+        counter.SetCount(T.Row(0) == Vector3(2.0f, -3.5f, 4.0f));
+        IS_EQUAL(T.Row(1), Vector3(-2.0f, -1.0f, 2.5f));
+        counter.SetCount(T.Row(1) == Vector3(-2.0f, -1.0f, 2.5f));
+        IS_EQUAL(T.Row(2), Vector3(0.0f, 0.0f, 1.0f));
+        counter.SetCount(T.Row(2) == Vector3(0.0f, 0.0f, 1.0f));
+        IS_EQUAL(T.Col(0), Vector2(2.0f, -2.0f));
+        counter.SetCount(T.Col(0) == Vector2(2.0f, -2.0f));
+        IS_EQUAL(T.Col(1), Vector2(-3.5f, -1.0f));
+        counter.SetCount(T.Col(1) == Vector2(-3.5f, -1.0f));
+        IS_EQUAL(T.GetTranslation(), Point2(4.0f, 2.5f));
+        counter.SetCount(T.GetTranslation() == Point2(4.0f, 2.5f));
+
+        T = Transform3(2.0f, 2.0f, 2.0f, 3.0f, 3.0f, 3.0f);
+        IS_EQUAL(T.Row(0), Vector3(2.0f, 2.0f, 2.0f));
+        counter.SetCount(T.Row(0) == Vector3(2.0f, 2.0f, 2.0f));
+        IS_EQUAL(T.Row(1), Vector3(3.0f, 3.0f, 3.0f));
+        counter.SetCount(T.Row(1) == Vector3(3.0f, 3.0f, 3.0f));
+        IS_EQUAL(T.Row(2), Vector3(0.0f, 0.0f, 1.0f));
+        counter.SetCount(T.Row(2) == Vector3(0.0f, 0.0f, 1.0f));
+        IS_EQUAL(T.Col(0), Vector2(2.0f, 3.0f));
+        counter.SetCount(T.Col(0) == Vector2(2.0f, 3.0f));
+        IS_EQUAL(T.Col(1), Vector2(2.0f, 3.0f));
+        counter.SetCount(T.Col(1) == Vector2(2.0f, 3.0f));
+        IS_EQUAL(T.GetTranslation(), Point2(2.0f, 3.0f));
+        counter.SetCount(T.GetTranslation() == Point2(2.0f, 3.0f));
+
+        T = T.Identity();
+        IS_EQUAL(T.Row(0), Vector3(1.0f, 0.0f, 0.0f));
+        counter.SetCount(T.Row(0) == Vector3(1.0f, 0.0f, 0.0f));
+        IS_EQUAL(T.Row(1), Vector3(0.0f, 1.0f, 0.0f));
+        counter.SetCount(T.Row(1) == Vector3(0.0f, 1.0f, 0.0f));
+        IS_EQUAL(T.Row(2), Vector3(0.0f, 0.0f, 1.0f));
+        counter.SetCount(T.Row(2) == Vector3(0.0f, 0.0f, 1.0f));
+        IS_EQUAL(T.Col(0), Vector2(1.0f, 0.0f));
+        counter.SetCount(T.Col(0) == Vector2(1.0f, 0.0f));
+        IS_EQUAL(T.Col(1), Vector2(0.0f, 1.0f));
+        counter.SetCount(T.Col(1) == Vector2(0.0f, 1.0f));
+        IS_EQUAL(T.GetTranslation(), Point2(0.0f, 0.0f));
+        counter.SetCount(T.GetTranslation() == Point2(0.0f, 0.0f));
+
+        T = T.Zero();
+        IS_EQUAL(T.Row(0), Vector3(0.0f, 0.0f, 0.0f));
+        counter.SetCount(T.Row(0) == Vector3(0.0f, 0.0f, 0.0f));
+        IS_EQUAL(T.Row(1), Vector3(0.0f, 0.0f, 0.0f));
+        counter.SetCount(T.Row(1) == Vector3(0.0f, 0.0f, 0.0f));
+        IS_EQUAL(T.Row(2), Vector3(0.0f, 0.0f, 1.0f));
+        counter.SetCount(T.Row(2) == Vector3(0.0f, 0.0f, 1.0f));
+        IS_EQUAL(T.Col(0), Vector2(0.0f, 0.0f));
+        counter.SetCount(T.Col(0) == Vector2(0.0f, 0.0f));
+        IS_EQUAL(T.Col(1), Vector2(0.0f, 0.0f));
+        counter.SetCount(T.Col(1) == Vector2(0.0f, 0.0f));
+        IS_EQUAL(T.GetTranslation(), Point2(0.0f, 0.0f));
+        counter.SetCount(T.GetTranslation() == Point2(0.0f, 0.0f));
+
+        Print("Testing Transform3 value change complete!");
+        Print("-Total Tests: " + to_string(counter.GetTotal()));
+        Print("-Tests Passed: " + to_string(counter.GetCountPass()));
+        Print("-Tests Failed: " + to_string(counter.GetCountFail()) + "\n");
+        counter.Reset();
+    }
+    void MemoryPlacement(void)
+    {
+        Print("Testing Transform3 memory placement...");
+
+        Transform3 T(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f);
+        Transform3 B = T;
+        Transform3 *x = &T, *y = &B;
+
+        IS_NOTEQUAL(x, y);
+        counter.SetCount(x != y);
+        IS_EQUAL(*x, *y);
+        counter.SetCount(*x == *y);
+
+        y = &T;
+        IS_EQUAL(x, y);
+        counter.SetCount(x == y);
+
+        Print("Testing Transform3 memory placement complete!");
+        Print("-Total Tests: " + to_string(counter.GetTotal()));
+        Print("-Tests Passed: " + to_string(counter.GetCountPass()));
+        Print("-Tests Failed: " + to_string(counter.GetCountFail()) + "\n");
+        counter.Reset();
+    }
+    void ClassOperators(void)
+    {
+        Print("Testing Transform3 class operators...");
+
+        Transform3 T(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f);
+        Transform3 B(2.0f, -3.5f, 4.0f, -2.0f, -1.0f, 2.5f);
+        Transform3 copyT = T;
+
+        IS_EQUAL(T[0], Vector2(1.0f, 4.0f));
+        counter.SetCount(T[0] == Vector2(1.0f, 4.0f));
+        IS_EQUAL(T[1], Vector2(2.0f, 5.0f));
+        counter.SetCount(T[1] == Vector2(2.0f, 5.0f));
+        IS_EQUAL(T[2], Vector2(3.0f, 6.0f));
+        counter.SetCount(T[2] == Vector2(3.0f, 6.0f));
+
+        T += B;
+        IS_EQUAL(T, Transform3(3.0f, -1.5f, 7.0f, 2.0f, 4.0f, 8.5f));
+        counter.SetCount(T == Transform3(3.0f, -1.5f, 7.0f, 2.0f, 4.0f, 8.5f));
+
+        T -= B;
+        IS_EQUAL(T, copyT);
+        counter.SetCount(T == copyT);
+
+        T *= 2.0f;
+        IS_EQUAL(T, Transform3(2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f));
+        counter.SetCount(T == Transform3(2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f));
+
+        T /= 2.0f;
+        IS_EQUAL(T, copyT);
+        counter.SetCount(T == copyT);
+
+
+        Print("Testing Transform3 class operators complete!");
+        Print("-Total Tests: " + to_string(counter.GetTotal()));
+        Print("-Tests Passed: " + to_string(counter.GetCountPass()));
+        Print("-Tests Failed: " + to_string(counter.GetCountFail()) + "\n");
+        counter.Reset();
+    }
+    void Methods(void)
+    {
+        Print("Testing Transform3 methods...");
+
+        Transform3 T(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f);
+        Transform3 B(2.0f, -3.5f, 4.0f, -2.0f, -1.0f, 2.5f);
+        Transform3 copyT = T;
+        Vector2 v(3.0f, -7.0f);
+        Point2 p = reinterpret_cast<const Point2& >(v);
+
+        IS_EQUAL(T+B, Transform3(3.0f, -1.5f, 7.0f, 2.0f, 4.0f, 8.5f));
+        counter.SetCount(T+B == Transform3(3.0f, -1.5f, 7.0f, 2.0f, 4.0f, 8.5f));
+        IS_EQUAL((T+B).Row(2), Vector3(0.0f, 0.0f, 1.0f));
+        counter.SetCount((T+B).Row(2) == Vector3(0.0f, 0.0f, 1.0f));
+        IS_EQUAL(T-B, Transform3(-1.0f, 5.5f, -1.0f, 6.0f, 6.0f, 3.5f));
+        counter.SetCount(T-B == Transform3(-1.0f, 5.5f, -1.0f, 6.0f, 6.0f, 3.5f));
+        IS_EQUAL((T-B).Row(2), Vector3(0.0f, 0.0f, 1.0f));
+        counter.SetCount((T-B).Row(2) == Vector3(0.0f, 0.0f, 1.0f));
+        IS_EQUAL(T*B, Transform3(-2.0f, -5.5f, 12.0f, -2.0f, -19.0f, 34.5f));
+        counter.SetCount(T*B == Transform3(-2.0f, -5.5f, 12.0f, -2.0f, -19.0f, 34.5f));
+        IS_EQUAL(T*v, Vector2(-11.0f, -23.0f));
+        counter.SetCount(T*v == Vector2(-11.0f, -23.0f));
+        IS_EQUAL(T*p, Point2(-11.0f, -23.0f));
+        counter.SetCount(T*p == Point2(-11.0f, -23.0f));
+
+        IS_EQUAL(T*2.0f, Transform3(2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f));
+        counter.SetCount(T*2.0f == Transform3(2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f));
+        IS_EQUAL(2.0f*T, Transform3(2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f));
+        counter.SetCount(2.0f*T == Transform3(2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f));
+        IS_EQUAL(T/2.0f, Transform3(0.5f, 1.0f, 1.5f, 2.0f, 2.5f, 3.0f));
+        counter.SetCount(T/2.0f == Transform3(0.5f, 1.0f, 1.5f, 2.0f, 2.5f, 3.0f));
+
+        IS_EQUAL(Inverse(T), Transform3(-5.0f/3.0f, 2.0f/3.0f, 1.0f, 4.0f/3.0f, -1.0f/3.0f, -2.0f));
+        counter.SetCount(Inverse(T) == Transform3(-5.0f/3.0f, 2.0f/3.0f, 1.0f, 4.0f/3.0f, -1.0f/3.0f, -2.0f));
+
+        Print("Testing Transform3 methods complete!");
+        Print("-Total Tests: " + to_string(counter.GetTotal()));
+        Print("-Tests Passed: " + to_string(counter.GetCountPass()));
+        Print("-Tests Failed: " + to_string(counter.GetCountFail()) + "\n");
+        counter.Reset();
+    }
     void AllTests(void)
     {
         cout << "* * * * * * * * * * * * * * * * * * * * * *" << endl;
@@ -2404,11 +2920,234 @@ struct TestTransform3
 struct TestTransform4
 {
     Counter counter;
-    void Initialize(void){}
-    void ValueChange(void){}
-    void MemoryPlacement(void){}
-    void ClassOperators(void){}
-    void Methods(void){}
+    void Initialize(void)
+    {
+        Print("Testing Transform4 initialization...");
+
+        Transform4 T(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f);
+        IS_EQUAL(T.Row(0), Vector4(1.0f, 2.0f, 3.0f, 4.0f));
+        counter.SetCount(T.Row(0) == Vector4(1.0f, 2.0f, 3.0f, 4.0f));
+        IS_EQUAL(T.Row(1), Vector4(5.0f, 6.0f, 7.0f, 8.0f));
+        counter.SetCount(T.Row(1) == Vector4(5.0f, 6.0f, 7.0f, 8.0f));
+        IS_EQUAL(T.Row(2), Vector4(9.0f, 10.0f, 11.0f, 12.0f));
+        counter.SetCount(T.Row(2) == Vector4(9.0f, 10.0f, 11.0f, 12.0f));
+        IS_EQUAL(T.Row(3), Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+        counter.SetCount(T.Row(3) == Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+        IS_EQUAL(T.Col(0), Vector3(1.0f, 5.0f, 9.0f));
+        counter.SetCount(T.Col(0) == Vector3(1.0f, 5.0f, 9.0f));
+        IS_EQUAL(T.Col(1), Vector3(2.0f, 6.0f, 10.0f));
+        counter.SetCount(T.Col(1) == Vector3(2.0f, 6.0f, 10.0f));
+        IS_EQUAL(T.Col(2), Vector3(3.0f, 7.0f, 11.0f));
+        counter.SetCount(T.Col(2) == Vector3(3.0f, 7.0f, 11.0f));
+        IS_EQUAL(T.GetTranslation(), Point3(4.0f, 8.0f, 12.0f));
+        counter.SetCount(T.GetTranslation() == Point3(4.0f, 8.0f, 12.0f));
+
+        Transform4 A(Vector3(-2.0f, 3.0f, -4.0f), Vector3(6.0f, 7.0f, -8.0f), Vector3(-5.0f, -1.0f, 9.0f), Point3(-3.5f, 2.5f, -1.5f));
+        IS_EQUAL(A.Row(0), Vector4(-2.0f, 6.0f, -5.0f, -3.5f));
+        counter.SetCount(A.Row(0) == Vector4(-2.0f, 6.0f, -5.0f, -3.5f));
+        IS_EQUAL(A.Row(1), Vector4(3.0f, 7.0f, -1.0f, 2.5f));
+        counter.SetCount(A.Row(1) == Vector4(3.0f, 7.0f, -1.0f, 2.5f));
+        IS_EQUAL(A.Row(2), Vector4(-4.0f, -8.0f, 9.0f, -1.5f));
+        counter.SetCount(A.Row(2) == Vector4(-4.0f, -8.0f, 9.0f, -1.5f));
+        IS_EQUAL(A.Row(3), Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+        counter.SetCount(A.Row(3) == Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+        IS_EQUAL(A.Col(0), Vector3(-2.0f, 3.0f, -4.0f));
+        counter.SetCount(A.Col(0) == Vector3(-2.0f, 3.0f, -4.0f));
+        IS_EQUAL(A.Col(1), Vector3(6.0f, 7.0f, -8.0f));
+        counter.SetCount(A.Col(1) == Vector3(6.0f, 7.0f, -8.0f));
+        IS_EQUAL(A.Col(2), Vector3(-5.0f, -1.0f, 9.0f));
+        counter.SetCount(A.Col(2) == Vector3(-5.0f, -1.0f, 9.0f));
+        IS_EQUAL(A.GetTranslation(), Point3(-3.5f, 2.5f, -1.5f));
+        counter.SetCount(A.GetTranslation() == Point3(-3.5f, 2.5f, -1.5f));
+
+        Transform4 B(Matrix3(1.0f, 1.0f, 1.0f, 2.0f, 2.0f, 2.0f, 3.0f, 3.0f, 3.0f), Point3(8.0f, 8.0f, 8.0f));
+        IS_EQUAL(B.Row(0), Vector4(1.0f, 1.0f, 1.0f, 8.0f));
+        counter.SetCount(B.Row(0) == Vector4(1.0f, 1.0f, 1.0f, 8.0f));
+        IS_EQUAL(B.Row(1), Vector4(2.0f, 2.0f, 2.0f, 8.0f));
+        counter.SetCount(B.Row(1) == Vector4(2.0f, 2.0f, 2.0f, 8.0f));
+        IS_EQUAL(B.Row(2), Vector4(3.0f, 3.0f, 3.0f, 8.0f));
+        counter.SetCount(B.Row(2) == Vector4(3.0f, 3.0f, 3.0f, 8.0f));
+        IS_EQUAL(B.Row(3), Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+        counter.SetCount(B.Row(3) == Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+        IS_EQUAL(B.Col(0), Vector3(1.0f, 2.0f, 3.0f));
+        counter.SetCount(B.Col(0) == Vector3(1.0f, 2.0f, 3.0f));
+        IS_EQUAL(B.Col(1), Vector3(1.0f, 2.0f, 3.0f));
+        counter.SetCount(B.Col(1) == Vector3(1.0f, 2.0f, 3.0f));
+        IS_EQUAL(B.Col(2), Vector3(1.0f, 2.0f, 3.0f));
+        counter.SetCount(B.Col(2) == Vector3(1.0f, 2.0f, 3.0f));
+        IS_EQUAL(B.GetTranslation(), Point3(8.0f, 8.0f, 8.0f));
+        counter.SetCount(B.GetTranslation() == Point3(8.0f, 8.0f, 8.0f));
+
+        Print("Testing Transform4 initialization complete!");
+        Print("-Total Tests: " + to_string(counter.GetTotal()));
+        Print("-Tests Passed: " + to_string(counter.GetCountPass()));
+        Print("-Tests Failed: " + to_string(counter.GetCountFail()) + "\n");
+        counter.Reset();
+    }
+    void ValueChange(void)
+    {
+        Print("Testing Transform4 value change...");
+        Transform4 A(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f);
+        Transform4 B(-3.0f, 1.0f, -4.0f, -5.0f, -7.0f, 13.0f, 2.5f, 4.5f, 5.0f, 1.0f, -1.0f, 3.5f);
+
+        A = B;
+        IS_EQUAL(A.Row(0), Vector4(-3.0f, 1.0f, -4.0f, -5.0f));
+        counter.SetCount(A.Row(0) == Vector4(-3.0f, 1.0f, -4.0f, -5.0f));
+        IS_EQUAL(A.Row(1), Vector4(-7.0f, 13.0f, 2.5f, 4.5f));
+        counter.SetCount(A.Row(1) == Vector4(-7.0f, 13.0f, 2.5f, 4.5f));
+        IS_EQUAL(A.Row(2), Vector4(5.0f, 1.0f, -1.0f, 3.5f));
+        counter.SetCount(A.Row(2) == Vector4(5.0f, 1.0f, -1.0f, 3.5f));
+        IS_EQUAL(A.Row(3), Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+        counter.SetCount(A.Row(3) == Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+        IS_EQUAL(A.Col(0), Vector3(-3.0f, -7.0f, 5.0f));
+        counter.SetCount(A.Col(0) == Vector3(-3.0f, -7.0f, 5.0f));
+        IS_EQUAL(A.Col(1), Vector3(1.0f, 13.0f, 1.0f));
+        counter.SetCount(A.Col(1) == Vector3(1.0f, 13.0f, 1.0f));
+        IS_EQUAL(A.Col(2), Vector3(-4.0f, 2.5f, -1.0f));
+        counter.SetCount(A.Col(2) == Vector3(-4.0f, 2.5f, -1.0f));
+        IS_EQUAL(A.GetTranslation(), Point3(-5.0f, 4.5f, 3.5f));
+        counter.SetCount(A.GetTranslation() == Point3(-5.0f, 4.5f, 3.5f));
+
+        A = Transform4(1.0f, 1.0f, 1.0f, 1.0f, 2.0f, 2.0f, 2.0f, 2.0f, 3.0f, 3.0f, 3.0f, 3.0f);
+        IS_EQUAL(A.Row(0), Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+        counter.SetCount(A.Row(0) == Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+        IS_EQUAL(A.Row(1), Vector4(2.0f, 2.0f, 2.0f, 2.0f));
+        counter.SetCount(A.Row(1) == Vector4(2.0f, 2.0f, 2.0f, 2.0f));
+        IS_EQUAL(A.Row(2), Vector4(3.0f, 3.0f, 3.0f, 3.0f));
+        counter.SetCount(A.Row(2) == Vector4(3.0f, 3.0f, 3.0f, 3.0f));
+        IS_EQUAL(A.Row(3), Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+        counter.SetCount(A.Row(3) == Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+        IS_EQUAL(A.Col(0), Vector3(1.0f, 2.0f, 3.0f));
+        counter.SetCount(A.Col(0) == Vector3(1.0f, 2.0f, 3.0f));
+        IS_EQUAL(A.Col(1), Vector3(1.0f, 2.0f, 3.0f));
+        counter.SetCount(A.Col(1) == Vector3(1.0f, 2.0f, 3.0f));
+        IS_EQUAL(A.Col(2), Vector3(1.0f, 2.0f, 3.0f));
+        counter.SetCount(A.Col(2) == Vector3(1.0f, 2.0f, 3.0f));
+        IS_EQUAL(A.GetTranslation(), Point3(1.0f, 2.0f, 3.0f));
+        counter.SetCount(A.GetTranslation() == Point3(1.0f, 2.0f, 3.0f));
+
+        Print("Testing Transform4 value change complete!");
+        Print("-Total Tests: " + to_string(counter.GetTotal()));
+        Print("-Tests Passed: " + to_string(counter.GetCountPass()));
+        Print("-Tests Failed: " + to_string(counter.GetCountFail()) + "\n");
+        counter.Reset();
+    }
+    void MemoryPlacement(void)
+    {
+        Print("Testing Transform4 memory placement...");
+        Transform4 A(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f);
+        Transform4 B = A;
+        Transform4 *x = &A, *y = &B;
+
+        IS_NOTEQUAL(x, y);
+        counter.SetCount(x != y);
+        IS_EQUAL(*x, *y);
+        counter.SetCount(*x == *y);
+
+        y = &A;
+        IS_EQUAL(x, y);
+        counter.SetCount(x == y);
+
+        Print("Testing Transform4 memory placement complete!");
+        Print("-Total Tests: " + to_string(counter.GetTotal()));
+        Print("-Tests Passed: " + to_string(counter.GetCountPass()));
+        Print("-Tests Failed: " + to_string(counter.GetCountFail()) + "\n");
+        counter.Reset();
+    }
+    void ClassOperators(void)
+    {
+        Print("Testing Transform4 class operators...");
+
+        Transform4 A(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f);
+        Transform4 B(-3.0f, 1.0f, -4.0f, -5.0f, -7.0f, 13.0f, 2.5f, 4.5f, 5.0f, 1.0f, -1.0f, 3.5f);
+        Transform4 copyA =  A;
+
+        IS_EQUAL(A[0], Vector3(1.0f, 5.0f, 9.0f));
+        counter.SetCount(A[0] == Vector3(1.0f, 5.0f, 9.0f));
+        IS_EQUAL(A[1], Vector3(2.0f, 6.0f, 10.0f));
+        counter.SetCount(A[1] == Vector3(2.0f, 6.0f, 10.0f));
+        IS_EQUAL(A[2], Vector3(3.0f, 7.0f, 11.0f));
+        counter.SetCount(A[2] == Vector3(3.0f, 7.0f, 11.0f));
+        IS_EQUAL(A[3], Vector3(4.0f, 8.0f, 12.0f));
+        counter.SetCount(A[3] == Vector3(4.0f, 8.0f, 12.0f));
+
+        A += B;
+        IS_EQUAL(A, Transform4(-2.0f, 3.0f, -1.0f, -1.0f, -2.0f, 19.0f, 9.5, 12.5f, 14.0f, 11.0f, 10.0f, 15.5f));
+        counter.SetCount(A == Transform4(-2.0f, 3.0f, -1.0f, -1.0f, -2.0f, 19.0f, 9.5, 12.5f, 14.0f, 11.0f, 10.0f, 15.5f));
+
+        A -= B;
+        IS_EQUAL(A, copyA);
+        counter.SetCount(A == copyA);
+
+        A *= 2.0f;
+        IS_EQUAL(A, Transform4(2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f, 14.0f, 16.0f, 18.0f, 20.0f, 22.0f, 24.0f));
+        counter.SetCount(A == Transform4(2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f, 14.0f, 16.0f, 18.0f, 20.0f, 22.0f, 24.0f));
+
+        A /= 2.0f;
+        IS_EQUAL(A, copyA);
+        counter.SetCount(A == copyA);
+
+        Print("Testing Transform4 class operators complete!");
+        Print("-Total Tests: " + to_string(counter.GetTotal()));
+        Print("-Tests Passed: " + to_string(counter.GetCountPass()));
+        Print("-Tests Failed: " + to_string(counter.GetCountFail()) + "\n");
+        counter.Reset();
+    }
+    void Methods(void)
+    {
+        Print("Testing Transform4 methods...");
+
+        Transform4 A(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f);
+        Transform4 B(-3.0f, 1.0f, -4.0f, -5.0f, -7.0f, 13.0f, 2.5f, 4.5f, 5.0f, 1.0f, -1.0f, 3.5f);
+        Transform4 copyA =  A;
+
+        Vector3 v (1.0f, -2.0f, 3.0f);
+        Point3 p = reinterpret_cast<const Point3&>(v);
+        Plane f(2.0f, 3.0f, 4.0f, 5.0f);
+        Line L(1.0f, 2.0f, 3.0f, -2.5, -2.0, 1.0f);
+
+        IS_EQUAL(A+B, Transform4(-2.0f, 3.0f, -1.0f, -1.0f, -2.0f, 19.0f, 9.5, 12.5f, 14.0f, 11.0f, 10.0f, 15.5f));
+        counter.SetCount(A+B == Transform4(-2.0f, 3.0f, -1.0f, -1.0f, -2.0f, 19.0f, 9.5, 12.5f, 14.0f, 11.0f, 10.0f, 15.5f));
+        A += B;
+        IS_EQUAL(A-B, copyA);
+        counter.SetCount(A-B == copyA);
+        A = copyA;
+        IS_EQUAL(A*B, Transform4(-2.0f, 30.0f, -2.0f, 18.5f, -22.0f, 90.0f, -12.0f, 34.5f, -42.0f, 150.0f, -22.0f, 50.5f));
+        counter.SetCount(A*B == Transform4(-2.0f, 30.0f, -2.0f, 18.5f, -22.0f, 90.0f, -12.0f, 34.5f, -42.0f, 150.0f, -22.0f, 50.5f));
+        IS_EQUAL(A*v, Vector3(6.0f, 14.0f, 22.0f));
+        counter.SetCount(A*v == Vector3(6.0f, 14.0f, 22.0f));
+        IS_EQUAL(v*A, Vector3(18.0f, 20.0f, 22.0f));
+        counter.SetCount(v*A == Vector3(18.0f, 20.0f, 22.0f));
+        IS_EQUAL(A*p, Point3(6.0f, 14.0f, 22.0f));
+        counter.SetCount(A*p == Point3(6.0f, 14.0f, 22.0f));
+        IS_EQUAL(p*A, Point3(18.0f, 20.0f, 22.0f));
+        counter.SetCount(p*A == Point3(18.0f, 20.0f, 22.0f));
+        IS_EQUAL(A*f, Plane(40.0f, 96.0f, 152.0f, 5.0f));
+        counter.SetCount(A*f == Plane(40.0f, 96.0f, 152.0f, 5.0f));
+        IS_EQUAL(f*A, Plane(53.0f, 62.0f, 71.0f, 85.0f));
+        counter.SetCount(f*A == Plane(53.0f, 62.0f, 71.0f, 85.0f));
+        IS_EQUAL(Inverse(B), Transform4(-0.0455882f, -0.00882353f, 0.160294f, -0.749265f,
+                                        0.0161765f, 0.0676471f, 0.104412f, -0.588971f,
+                                        -0.211765f, 0.0235294f, -0.0941176f, -0.835294f));
+        counter.SetCount(Inverse(B) == Transform4(-0.0455882f, -0.00882353f, 0.160294f, -0.749265f,
+                                                0.0161765f, 0.0676471f, 0.104412f, -0.588971f,
+                                                -0.211765f, 0.0235294f, -0.0941176f, -0.835294f));
+        IS_EQUAL(Reflection(f), Transform4(0.724138f, -0.413793f, -0.551724f, -3.713907f,
+                                            -0.413793f, 0.379310f, -0.827586f, -5.570860f,
+                                            -0.551724f, -0.827586f, -0.103448f, -7.427814f));
+        counter.SetCount(Reflection(f) == Transform4(0.724138f, -0.413793f, -0.551724f, -3.713907f,
+                                                    -0.413793f, 0.379310f, -0.827586f, -5.570860f,
+                                                    -0.551724f, -0.827586f, -0.103448f, -7.427814f));
+        IS_EQUAL(TransformLine(L, B), Line(-13.0f, 26.5f, 4.0f, -119.0f, -56.0f, -313.25f));
+        counter.SetCount(TransformLine(L, B) == Line(-13.0f, 26.5f, 4.0f, -119.0f, -56.0f, -313.25f));
+
+
+        Print("Testing Transform4 methods complete!");
+        Print("-Total Tests: " + to_string(counter.GetTotal()));
+        Print("-Tests Passed: " + to_string(counter.GetCountPass()));
+        Print("-Tests Failed: " + to_string(counter.GetCountFail()) + "\n");
+        counter.Reset();
+    }
     void AllTests(void)
     {
         cout << "* * * * * * * * * * * * * * * * * * * * * *" << endl;
@@ -2433,11 +3172,149 @@ struct TestTransform4
 struct TestQuaternion
 {
     Counter counter;
-    void Initialize(void){}
-    void ValueChange(void){}
-    void MemoryPlacement(void){}
-    void ClassOperators(void){}
-    void Methods(void){}
+    void Initialize(void)
+    {
+        Print("Testing Quaternion initialization...");
+
+        Quaternion q(1.0f, 2.0f, 3.0f, 4.0f);
+        IS_EQUAL(q.x, 1.0f); counter.SetCount(q.x == 1.0f);
+        IS_EQUAL(q.y, 2.0f); counter.SetCount(q.y == 2.0f);
+        IS_EQUAL(q.z, 3.0f); counter.SetCount(q.z == 3.0f);
+        IS_EQUAL(q.w, 4.0f); counter.SetCount(q.w == 4.0f);
+
+        Quaternion r(Vector3(3.0f, -4.0f, 2.0f), -1.0f);
+        IS_EQUAL(r.x, 3.0f); counter.SetCount(r.x == 3.0f);
+        IS_EQUAL(r.y, -4.0f); counter.SetCount(r.y == -4.0f);
+        IS_EQUAL(r.z, 2.0f); counter.SetCount(r.z == 2.0f);
+        IS_EQUAL(r.w, -1.0f); counter.SetCount(r.w == -1.0f);
+
+        IS_EQUAL(q.GetVector(), Vector3(1.0f, 2.0f, 3.0));
+        counter.SetCount(q.GetVector() == Vector3(1.0f, 2.0f, 3.0));
+        IS_EQUAL(r.GetVector(), Vector3(3.0f, -4.0f, 2.0f));
+        counter.SetCount(r.GetVector() == Vector3(3.0f, -4.0f, 2.0f));
+
+        Print("Testing Quaternion initialization complete!");
+        Print("-Total Tests: " + to_string(counter.GetTotal()));
+        Print("-Tests Passed: " + to_string(counter.GetCountPass()));
+        Print("-Tests Failed: " + to_string(counter.GetCountFail()) + "\n");
+        counter.Reset();
+    }
+    void ValueChange(void)
+    {
+        Print("Testing Quaternion value change...");
+
+        Quaternion q(1.0f, 2.0f, 3.0f, 4.0f);
+        q = Quaternion(Vector3(3.0f, -4.0f, 2.0f), -1.0f);
+        IS_EQUAL(q.x, 3.0f); counter.SetCount(q.x == 3.0f);
+        IS_EQUAL(q.y, -4.0f); counter.SetCount(q.y == -4.0f);
+        IS_EQUAL(q.z, 2.0f); counter.SetCount(q.z == 2.0f);
+        IS_EQUAL(q.w, -1.0f); counter.SetCount(q.w == -1.0f);
+
+        q = Quaternion(4.0f, -5.0f, -2.0f, 3.0f);
+        IS_EQUAL(q.x, 4.0f); counter.SetCount(q.x == 4.0f);
+        IS_EQUAL(q.y, -5.0f); counter.SetCount(q.y == -5.0f);
+        IS_EQUAL(q.z, -2.0f); counter.SetCount(q.z == -2.0f);
+        IS_EQUAL(q.w, 3.0f); counter.SetCount(q.w == 3.0f);
+
+        Quaternion r(-9.0f, 2.0f, -7.0f, 4.0f);
+        q = r;
+        IS_EQUAL(q.x, -9.0f); counter.SetCount(q.x == -9.0f);
+        IS_EQUAL(q.y, 2.0f); counter.SetCount(q.y == 2.0f);
+        IS_EQUAL(q.z, -7.0f); counter.SetCount(q.z == -7.0f);
+        IS_EQUAL(q.w, 4.0f); counter.SetCount(q.w == 4.0f);
+
+        q.SetRotation(Matrix3(3.0f, 2.0f, -3.0f, -2.0f, 1.0f, -2.0f, -1.0f, -1.0f, 3.0f));
+        IS_EQUAL(q, Quaternion(0.108465f, -0.2169305f, -0.4338609f, 0.8677218f));
+        counter.SetCount(q == Quaternion(0.108465f, -0.2169305f, -0.4338609f, 0.8677218f));
+
+        q = r;
+        Matrix3 m = q.GetRotation();
+        IS_EQUAL(m, Matrix3(0.29333f, 0.133333f, 0.946667f, -0.613333f, -0.733333f, 0.293333f, 0.733333f, -0.666667f, -0.133333f));
+        counter.SetCount(m == Matrix3(0.29333f, 0.133333f, 0.946667f, -0.613333f, -0.733333f, 0.293333f, 0.733333f, -0.666667f, -0.133333f));
+
+        Print("Testing Quaternion value change complete!");
+        Print("-Total Tests: " + to_string(counter.GetTotal()));
+        Print("-Tests Passed: " + to_string(counter.GetCountPass()));
+        Print("-Tests Failed: " + to_string(counter.GetCountFail()) + "\n");
+        counter.Reset();
+    }
+    void MemoryPlacement(void)
+    {
+        Print("Testing Quaternion memory placement...");
+        Quaternion q(1.0f, 2.0f, 3.0f, 4.0f);
+        Quaternion p = q, *x = &p, *y =  &q;
+        IS_NOTEQUAL(x, y);  counter.SetCount(x != y);
+        IS_EQUAL(*x, *y); counter.SetCount(*x == *y);
+
+        y = &p;
+        IS_EQUAL(x,y); counter.SetCount(x == y);
+
+        Print("Testing Quaternion memory placement complete!");
+        Print("-Total Tests: " + to_string(counter.GetTotal()));
+        Print("-Tests Passed: " + to_string(counter.GetCountPass()));
+        Print("-Tests Failed: " + to_string(counter.GetCountFail()) + "\n");
+        counter.Reset();
+    }
+    void ClassOperators(void)
+    {
+        Print("Testing Quaternion class operators...");
+
+        Quaternion p(4.0f, -3.0f, -7.0f, 2.0f);
+        Quaternion q(1.0f, 2.0f, 3.0f, 4.0f);
+        Quaternion copyP = p;
+
+        p += q;
+        IS_EQUAL(p, Quaternion(5.0f, -1.0f, -4.0f, 6.0f));
+        counter.SetCount(p == Quaternion(5.0f, -1.0f, -4.0f, 6.0f));
+        p -= q;
+        IS_EQUAL(p, copyP); counter.SetCount(p == copyP);
+        p *= 2.0f;
+        IS_EQUAL(p, Quaternion(8.0f, -6.0f, -14.0f, 4.0f));
+        counter.SetCount(p == Quaternion(8.0f, -6.0f, -14.0f, 4.0f));
+        p /= 2.0f;
+        IS_EQUAL(p, copyP); counter.SetCount(p == copyP);
+        p *= q;
+        IS_EQUAL(p, Quaternion(23.0f, -27.0f, -11.0f, 31.0f));
+        counter.SetCount(p == Quaternion(23.0f, -27.0f, -11.0f, 31.0f));
+
+
+        Print("Testing Quaternion class operators complete!");
+        Print("-Total Tests: " + to_string(counter.GetTotal()));
+        Print("-Tests Passed: " + to_string(counter.GetCountPass()));
+        Print("-Tests Failed: " + to_string(counter.GetCountFail()) + "\n");
+        counter.Reset();
+    }
+    void Methods(void)
+    {
+        Print("Testing Quaternion methods...");
+
+        Quaternion p(4.0f, -3.0f, -7.0f, 2.0f);
+        Quaternion q(1.0f, 2.0f, 3.0f, 4.0f);
+        Quaternion copyP = p;
+
+        IS_EQUAL(p+q, Quaternion(5.0f, -1.0f, -4.0f, 6.0f));
+        counter.SetCount(p+q == Quaternion(5.0f, -1.0f, -4.0f, 6.0f));
+        IS_EQUAL(p-q, Quaternion(3.0f, -5.0f, -10.0f, -2.0f));
+        counter.SetCount(p-q == Quaternion(3.0f, -5.0f, -10.0f, -2.0f));
+        IS_EQUAL(p*2.0f, Quaternion(8.0f, -6.0f, -14.0f, 4.0f));
+        counter.SetCount(p*2.0f == Quaternion(8.0f, -6.0f, -14.0f, 4.0f));
+        IS_EQUAL(2.0f*p, Quaternion(8.0f, -6.0f, -14.0f, 4.0f));
+        counter.SetCount(2.0f*p == Quaternion(8.0f, -6.0f, -14.0f, 4.0f));
+        IS_EQUAL(p/2.0f, Quaternion(2.0f, -1.5f, -3.5f, 1.0f));
+        counter.SetCount(p/2.0f == Quaternion(2.0f, -1.5f, -3.5f, 1.0f));
+        IS_EQUAL(p*q, Quaternion(23.0f, -27.0f, -11.0f, 31.0f));
+        counter.SetCount(p*q == Quaternion(23.0f, -27.0f, -11.0f, 31.0f));
+
+        Vector3 v(3.0f, -1.0f, 2.0f);
+        IS_EQUAL(Transform(v, p), Vector3(182.0f, -194.0f, 176.0f));
+        counter.SetCount(Transform(v, p) == Vector3(182.0f, -194.0f, 176.0f));
+
+        Print("Testing Quaternion methods complete!");
+        Print("-Total Tests: " + to_string(counter.GetTotal()));
+        Print("-Tests Passed: " + to_string(counter.GetCountPass()));
+        Print("-Tests Failed: " + to_string(counter.GetCountFail()) + "\n");
+        counter.Reset();
+    }
     void AllTests(void)
     {
         cout << "* * * * * * * * * * * * * * * * * * * * * *" << endl;

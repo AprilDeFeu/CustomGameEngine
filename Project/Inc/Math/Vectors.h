@@ -54,7 +54,7 @@ struct Vector2
     const string ToString(void) const {return "(" + to_string(x) + ", " + to_string(y) + ")";}
     //! @public @memberof Vector2
     //! @brief Prints this Vector2
-    void Print(void) {cout << "Vector2: " << (*this).ToString() << "\n";}
+    const void Print(void) const {cout << "Vector2: " << (*this).ToString() << "\n";}
 };
 
 /*! @class Vector3
@@ -92,7 +92,7 @@ struct Vector3
     const string ToString(void) const {return "(" + to_string(x) + ", " + to_string(y) + ", " + to_string(z) + ")";}
     //! @public @memberof Vector3
     //! @brief Prints this Vector3
-    void Print(void) {cout << "Vector3: " << (*this).ToString() << "\n";}
+    const void Print(void) const {cout << "Vector3: " << (*this).ToString() << "\n";}
 
 };
 
@@ -134,7 +134,7 @@ struct Vector4
             ", " + to_string(z) + ", " + to_string(w) + ")";}
     //! @public @memberof Vector4
     //! @brief Prints this Vector4
-    void Print(void) {cout << "Vector4: " << (*this).ToString() << "\n";}
+    const void Print(void) const {cout << "Vector4: " << (*this).ToString() << "\n";}
 };
 
 //---------------------------------------------------------------------------------------------
